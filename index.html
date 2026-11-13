@@ -154,9 +154,8 @@
 <div id="sundayMessage" class="notice hidden" role="status"></div>
 <p class="hint">명단을 비우고 적용하면 제외 설정도 해제됩니다. 제외 명단에 포함된 사람은 출결 대상 인원수에 포함되지 않고, 최종 출결에는 이름/결/예배위원으로 표시됩니다. 조슬기, 최성빈은 제외됩니다.</p></section>
 <section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><p class="hint">이름 뒤에 붙는 영문자는 대문자·소문자 모두 인식합니다. 예: 최지웅a = 최지웅A (A와 B는 별도 인원)</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
-<section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2><p class="hint" id="rosterSyncGuide">공통 인원의 변경은 화요일 전체·화요일 군악대·토요일 군악대·토요일 현악 모임에 연동됩니다. (토) 관현악 예배위원 모임은 별도 관리합니다.</p>
+<section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
-<p class="hint">이름·악기·파트 변경은 같은 사람이 등록된 다른 모임에도 반영됩니다. 새 인원은 전체모임과 해당 악기 모임에 추가되며, 예배위원 대상은 별도로 유지됩니다. 날짜별 출결은 모임마다 독립적으로 저장됩니다.</p>
 <div class="roster-tabs" role="group" aria-label="명단 분류"><button id="instrumentTab" type="button" class="active">악기별 명단</button><button id="teamTab" type="button" class="secondary">파트별 명단</button></div>
 <div id="instrumentPanel"><p class="hint">악기와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. ✎ 이름 수정 · × 이름 삭제</p>
 <div class="member-add-panel"><h3>파트원 추가</h3><div class="row"><label for="rosterInstrument">악기</label><select id="rosterInstrument" aria-label="추가할 악기"></select><label for="rosterPart">파트</label><select id="rosterPart" aria-label="배정할 파트"></select><input id="rosterName" type="text" placeholder="추가할 이름" aria-label="추가할 이름" style="flex:1;min-width:150px"><button id="addRoster">파트원 추가</button></div></div><div id="rosterList"></div></div>
@@ -196,12 +195,9 @@
 <script>
 'use strict';
 const MEETING_LABELS={"tue-all":"(화) 관현악 전체모임","tue-army":"(화) 전체모임 군악대","sat-army":"(토) 군악대 모임","sat-strings":"(토) 현악파트 모임","sat-committee":"(토) 관현악 예배위원 모임"};
-const MEETING_DEFAULTS={"tue-all":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Cb.","정신"],["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이병기 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"tue-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 강연수 문주은 서종하 이지인 최성빈 황은선"],["Cb.","정신"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 강연수 문주은 서종하 이지인 최성빈 황은선"],["Cb.","정신"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-strings":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Cb.","정신"]],"sat-committee":[["Vn.","이채원 강은실 김석현 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Cb.","정신"],["Fl.","장하람 강지나 김지선 조슬기"],["Cla.","강채은 곽현지 이수형 정용성 황찬혁"],["Sax.","진승리 강연수 문주은 이지인 최성빈 황은선"],["Hn.","김예은 장윤주"],["Tp.","박나현 강유영 양가연 윤소현 최지웅A"],["Tb.","채창무 김혜주 이병기 이성제"],["Eup.","박혜람 주성현"],["Tuba.","안시온"],["Per.","최상범 김소연 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"]]};
+const MEETING_DEFAULTS={"tue-all":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이병기 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"tue-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-strings":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Sax.","정신"]],"sat-committee":[["Vn.","이채원 강은실 김석현 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Fl.","장하람 강지나 김지선 조슬기"],["Cla.","강채은 곽현지 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 이지인 최성빈 황은선"],["Hn.","김예은 장윤주"],["Tp.","박나현 강유영 양가연 윤소현 최지웅A"],["Tb.","채창무 김혜주 이병기 이성제"],["Eup.","박혜람 주성현"],["Tuba.","안시온"],["Per.","최상범 김소연 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"]]};
 const TEAM_DEFAULTS={"tue-all":[["가온소리","황은선 진효남 김석현 김예은 김혜주 석효진 이병기 이수형 이주영 장소현 차연주"],["사랑소리","장하람 김서현 김지선 강지나 문주은 양가연 이건 이성제 이채련 정유희"],["생명의소리","조슬기 박은빈 강연수 김내영 김영기 김은송 김한동 박범성 윤소현 장해진 전희주 채창무"],["은혜소리","박나현 강유영 서종하 손자영 신성은 오세현 최성빈 최효승 황찬혁"],["하나된소리","진승리 곽현지 정신 김소희 이정빈 이중학 이지인 정용성 최지웅A 최지웅B 최태원"],["하늘소리","이채원 강채은 강은실 김재빈 문경욱 서한비 이한나 최상범 최진희 정재원"],["화음소리","안시온 김소연 박혜람 이정호 이하빈 임수규 장윤주 전우진 주성현"]],"tue-army":[["가온소리","황은선 김예은 김혜주 석효진 이수형"],["사랑소리","장하람 김서현 김지선 강지나 문주은 양가연 이건 이성제 이채련"],["생명의소리","조슬기 박은빈 강연수 김내영 김영기 김은송 김한동 윤소현 전희주 채창무"],["은혜소리","박나현 강유영 서종하 신성은 오세현 최성빈 황찬혁"],["하나된소리","진승리 곽현지 정신 김소희 이중학 이지인 정용성 최지웅A 최지웅B"],["하늘소리","강채은 김재빈 문경욱 이한나 최상범 정재원"],["화음소리","안시온 김소연 박혜람 이하빈 장윤주 전우진 주성현"]],"sat-army":[["가온소리","황은선 김예은 김혜주 석효진 이수형"],["사랑소리","장하람 김서현 김지선 강지나 문주은 양가연 이건 이성제 이채련"],["생명의소리","조슬기 박은빈 강연수 김내영 김영기 김은송 김한동 윤소현 전희주 채창무"],["은혜소리","박나현 강유영 서종하 신성은 오세현 최성빈 황찬혁"],["하나된소리","진승리 곽현지 정신 김소희 이중학 이지인 정용성 최지웅A 최지웅B"],["하늘소리","강채은 김재빈 문경욱 이한나 최상범 정재원"],["화음소리","안시온 김소연 박혜람 이하빈 장윤주 전우진 주성현"]],"sat-strings":[["현악파트","진효남 김석현 이주영 장소현 차연주 정유희 장해진 박범성 최효승 손자영 정신 이정빈 최태원 이채원 강은실 서한비 최진희 이정호 임수규"]],"sat-committee":[["가온소리","황은선 진효남 김석현 김예은 김혜주 석효진 이병기 이수형 이주영 장소현 차연주"],["사랑소리","장하람 김지선 강지나 문주은 양가연 이성제 정유희"],["생명의소리","조슬기 강연수 김한동 박범성 윤소현 장해진 전희주 채창무"],["은혜소리","박나현 강유영 손자영 신성은 최성빈 최효승 황찬혁"],["하나된소리","진승리 곽현지 정신 이정빈 이중학 이지인 정용성 최지웅A 최지웅B 최태원"],["하늘소리","이채원 강채은 강은실 문경욱 최상범 최진희"],["화음소리","안시온 김소연 박혜람 이정호 임수규 장윤주 전우진 주성현"]]};
 const MEETING_IDS=Object.keys(MEETING_LABELS);
-// 예배위원 모임은 의도적으로 완전 분리: 이 네 모임만 사람·악기·파트를 공유한다.
-const SHARED_MEETING_IDS=Object.freeze(['tue-all','tue-army','sat-army','sat-strings']);
-const isSharedMeeting=id=>SHARED_MEETING_IDS.includes(id);
 const MULTI_PREFIX='orchestra-attendance-multi-v1';
 const LEGACY_MEETING='sat-committee';
 let activeMeeting=LEGACY_MEETING;
@@ -242,267 +238,117 @@ function loadRoster(){try{
  ROSTER.splice(0,ROSTER.length,...cloneRows(rows));rebuildPeople();
  }catch(e){ROSTER.splice(0,ROSTER.length,...cloneRows(MEETING_DEFAULTS[activeMeeting]));rebuildPeople();console.warn('명단 불러오기 실패',e)}}
 
-const localRevisionKey='sat-committee-local-revision-20261113-v1';
+// 2026-11-13: Cb. 삭제, 정신을 Sax.의 진승리 다음으로 배치.
+// 기존 localStorage 명단에도 적용하되, 다른 개인별 변경사항은 유지한다.
+const ROSTER_MIGRATION_KEY=MULTI_PREFIX+'-sax-without-cb-v2';
+function normalizeInstrumentRoster(rows,meeting){
+ const source=cloneRows(rows);
+ let hadPerson=false;
+ for(const row of source){
+  if(row[0]==='Cb.'&&row[1].split(/\s+/).includes('정신'))hadPerson=true;
+  row[1]=row[1].split(/\s+/).filter(n=>n&&n!=='정신').join(' ');
+ }
+ const cleaned=source.filter(row=>row[0]!=='Cb.');
+ // 정신은 화요일 군악대 명단에서만 제외한다.
+ const mustContain=meeting!=='tue-army'&&(hadPerson||source.some(row=>row[0]==='Sax.'&&row[1].split(/\s+/).includes('정신'))||MEETING_DEFAULTS[meeting].some(row=>row[1].split(/\s+/).includes('정신')));
+ if(mustContain){
+  let sax=cleaned.find(row=>row[0]==='Sax.');
+  if(!sax){sax=['Sax.',''];cleaned.push(sax)}
+  const names=sax[1].split(/\s+/).filter(Boolean);
+  names.splice(names.includes('진승리')?names.indexOf('진승리')+1:0,0,'정신');
+  sax[1]=names.join(' ');
+ }
+ return cleaned;
+}
 function migrateExistingRosterAndReasons(){
  try{
-  if(localStorage.getItem(localRevisionKey)==='1')return;
-  const cb=ROSTER.find(r=>r[0]==='Cb.');
-  const sax=ROSTER.find(r=>r[0]==='Sax.');
-  if(cb&&sax){
-   const members=sax[1].split(/\s+/).filter(Boolean);
-   if(members.includes('정신')){
-    sax[1]=members.filter(x=>x!=='정신').join(' ');
-    if(!cb[1].split(/\s+/).includes('정신'))cb[1]=[cb[1],'정신'].filter(Boolean).join(' ');
+  if(localStorage.getItem(ROSTER_MIGRATION_KEY)!=='1'){
+   for(const id of MEETING_IDS){
+    const original=readMeetingRoster(id);
+    writeMeetingRoster(id,normalizeInstrumentRoster(original,id));
    }
+   localStorage.setItem(ROSTER_MIGRATION_KEY,'1');
   }
-  const paIndex=ROSTER.findIndex(r=>r[0].toLowerCase()==='pa.');
-  if(paIndex>=0){
-   const paMembers=ROSTER[paIndex][1].split(/\s+/).filter(Boolean);
-   if(paMembers.length){
-    let per=ROSTER.find(r=>r[0]==='Per.');
-    if(!per){per=['Per.',''];ROSTER.splice(paIndex,0,per)}
-    per[1]=[per[1],...paMembers].filter(Boolean).join(' ');
-   }
-   const removed=ROSTER.findIndex(r=>r[0].toLowerCase()==='pa.');
-   if(removed>=0)ROSTER.splice(removed,1);
-  }
+  const corrected=readMeetingRoster(activeMeeting);
+  ROSTER.splice(0,ROSTER.length,...corrected);
+  rebuildPeople();
   const partIndex=REASONS.indexOf('파트미보고');
-  if(partIndex>=0)REASONS.splice(partIndex,1);
-  const missingIndex=REASONS.indexOf('미보고');
-  REASONS.splice(missingIndex>=0?missingIndex+1:REASONS.length,0,'파트미보고');
-  rebuildPeople();saveRoster();saveReasons();
-  localStorage.setItem(localRevisionKey,'1');
- }catch(e){console.warn('기존 명단·사유 업데이트 실패',e)}
+  if(partIndex>=0){REASONS.splice(partIndex,1);const missing=REASONS.indexOf('미보고');REASONS.splice(missing>=0?missing+1:REASONS.length,0,'파트미보고')}
+  saveReasons();
+ }catch(e){console.warn('명단 마이그레이션 실패',e)}
 }
 
-
-/* 4개 모임만 연동한다. 각 모임의 비공통 참석 대상과 전용 파트 분류는 유지한다.
-   (토) 관현악 예배위원 모임의 명단, 파트, 출결 이력은 독립적이다. */
+/* 네 모임의 공통 인원은 악기/순서/이름 변경을 동기화한다.
+   (토) 예배위원 명단은 동기화하지 않는다. 각 모임 대상 인원은 유지한다. */
+const SYNC_MEETINGS=['tue-all','tue-army','sat-army','sat-strings'];
 function readMeetingRoster(id){
  try{const data=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-roster-'+id)||'null');return validateRows(data)?cloneRows(data):cloneRows(MEETING_DEFAULTS[id])}
  catch(e){return cloneRows(MEETING_DEFAULTS[id])}
 }
 function writeMeetingRoster(id,rows){try{localStorage.setItem(MULTI_PREFIX+'-roster-'+id,JSON.stringify(rows))}catch(e){console.warn('명단 연동 실패',e)}}
-// 과거 브라우저에 저장된 기존 출결 명단에도 악기 정정을 1회 적용한다.
-// 예배위원 명단과 출결 이력은 이 보정에서 전혀 수정하지 않는다.
-function migrateJeongsinToCb(){
- const migrationKey=MULTI_PREFIX+'-jeongsin-cb-shared-v1';
- try{
-  if(localStorage.getItem(migrationKey)==='1')return;
-  for(const id of SHARED_MEETING_IDS){
-   const storageKey=MULTI_PREFIX+'-roster-'+id;
-   if(!localStorage.getItem(storageKey))continue;
-   const rows=readMeetingRoster(id);
-   const sax=rows.find(row=>row[0]==='Sax.');
-   if(!sax||!namesInRow(sax).includes('정신'))continue;
-   stripMember(rows,'정신');putMember(rows,'정신','Cb.');
-   if(validateRows(rows))writeMeetingRoster(id,rows);
-  }
-  localStorage.setItem(migrationKey,'1');
- }catch(e){console.warn('정신님 Cb. 명단 보정 실패',e)}
-}
-function readMeetingTeams(id){
- try{const data=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-teams-'+id)||'null');return Array.isArray(data)&&(data.length===0||validateRows(data))?cloneRows(data):cloneRows(TEAM_DEFAULTS[id])}
- catch(e){return cloneRows(TEAM_DEFAULTS[id])}
-}
-function writeMeetingTeams(id,rows){try{localStorage.setItem(MULTI_PREFIX+'-teams-'+id,JSON.stringify(rows))}catch(e){console.warn('파트 연동 실패',e)}}
-function namesInRow(row){return row[1].split(/\s+/).filter(Boolean)}
-function hasMember(rows,name){return rows.some(row=>namesInRow(row).includes(name))}
-function stripMember(rows,name){
- let changed=false;
- for(const row of rows){const members=namesInRow(row);if(members.includes(name)){row[1]=members.filter(n=>n!==name).join(' ');changed=true}}
- return changed;
-}
-function putMember(rows,name,group){
- let row=rows.find(r=>r[0]===group);
- if(!row){row=[group,''];rows.push(row)}
- if(!namesInRow(row).includes(name))row[1]=[row[1],name].filter(Boolean).join(' ');
-}
-function changeMemberGroup(rows,name,group){
- if(!hasMember(rows,name))return false;
- stripMember(rows,name);putMember(rows,name,group);return true;
-}
-// Preserve other-only members in their positions, while matching the relative order of shared members.
-function alignSharedOrder(targetRows,sourceRows){
- const sources=new Map(sourceRows.map(([group,names])=>[group,names.split(/\s+/).filter(Boolean)]));
- for(const row of targetRows){
-  const desired=sources.get(row[0]);if(!desired)continue;
-  const order=new Map(desired.map((name,i)=>[name,i]));
-  const members=namesInRow(row),shared=members.filter(name=>order.has(name)).sort((a,b)=>order.get(a)-order.get(b));
-  let index=0;row[1]=members.map(name=>order.has(name)?shared[index++]:name).join(' ');
- }
-}
-function alignGroupOrder(targetRows,sourceRows){
- const order=new Map(sourceRows.map(([group],i)=>[group,i]));
- const common=targetRows.filter(([group])=>order.has(group)).sort((a,b)=>order.get(a[0])-order.get(b[0]));
- let i=0;return targetRows.map(row=>order.has(row[0])?common[i++]:row);
-}
-function updateOtherTemplateOrder(id,rows){
- try{
-  const storageKey=MULTI_PREFIX+'-template-'+id;
-  const template=JSON.parse(localStorage.getItem(storageKey)||'null');
-  if(typeof template!=='string')return;
-  const names=new Set(rows.map(r=>r[0]));
-  const present=new Set(template.split('\n').map(line=>line.trim()).filter(n=>names.has(n)));
-  const order=rows.map(r=>r[0]).filter(n=>present.has(n));let i=0;
-  const updated=template.split('\n').map(line=>{
-   if(!names.has(line.trim())||i>=order.length)return line;
-   const leading=(line.match(/^\s*/)||[''])[0],trailing=(line.match(/\s*$/)||[''])[0];
-   return leading+order[i++]+trailing;
-  }).join('\n');
-  localStorage.setItem(storageKey,JSON.stringify(updated));
- }catch(e){console.warn('출력 양식 순서 연동 실패',e)}
-}
-function globalMemberCollision(next,old){
- // 예배위원 모임은 공유 인물의 고유 이름 검증에도 포함하지 않는다.
- if(!isSharedMeeting(activeMeeting))return false;
- return SHARED_MEETING_IDS.some(id=>readMeetingRoster(id).some(row=>namesInRow(row).some(name=>cleanName(name)===cleanName(next)&&name!==old)));
-}
-function renameAttendanceHistory(oldName,newName,meetingIds){
- if(oldName===newName)return;
- // 이름을 키로 사용하는 각 모임의 과거 출결을 보존하며, 연결되지 않은 모임에는 절대 손대지 않는다.
- try{
-  const prefixes=meetingIds.map(id=>MULTI_PREFIX+'-attendance-'+id+'-');
-  const keys=[];
-  for(let i=0;i<localStorage.length;i++){
-   const k=localStorage.key(i);
-   if(k&&prefixes.some(prefix=>k.startsWith(prefix)))keys.push(k);
-  }
-  for(const k of keys){
-   const raw=localStorage.getItem(k);if(!raw)continue;
-   const data=JSON.parse(raw);if(!data||typeof data!=='object')continue;
-   let changed=false;
-   if(data.people&&Object.prototype.hasOwnProperty.call(data.people,oldName)){
-    if(!Object.prototype.hasOwnProperty.call(data.people,newName))data.people[newName]=data.people[oldName];
-    delete data.people[oldName];changed=true;
-   }
-   if(Array.isArray(data.excludedSunday)&&data.excludedSunday.includes(oldName)){
-    data.excludedSunday=[...new Set(data.excludedSunday.map(n=>n===oldName?newName:n))];changed=true;
-   }
-   if(changed)localStorage.setItem(k,JSON.stringify(data));
-  }
-  // 독립된 예배위원 모임의 기존 단일 모임 저장 방식만 자체 변경 시 함께 수정한다.
-  if(meetingIds.length===1&&meetingIds[0]===LEGACY_MEETING){
-   const oldData=JSON.parse(localStorage.getItem(key)||'null');
-   if(oldData?.people&&Object.prototype.hasOwnProperty.call(oldData.people,oldName)){
-    if(!Object.prototype.hasOwnProperty.call(oldData.people,newName))oldData.people[newName]=oldData.people[oldName];
-    delete oldData.people[oldName];localStorage.setItem(key,JSON.stringify(oldData));
-   }
-  }
- }catch(e){console.warn('기존 출결 기록의 이름 연동 실패',e)}
-}
-const STRING_INSTRUMENTS=new Set(['Vn.','Va.','Vc.','Cb.']);
-const ARMY_INSTRUMENTS=new Set(['Fl.','Cla.','Sax.','Hn.','Tp.','Tb.','Eup.','Tuba.','Per.','pa.']);
-function newMemberMeetings(inst){
- // 신규 인원은 전체모임과 해당 악기 분야 모임에만 추가하고, 예배위원에는 추가하지 않는다.
- if(!isSharedMeeting(activeMeeting))return new Set();
- const ids=new Set(['tue-all',activeMeeting]);
- if(STRING_INSTRUMENTS.has(inst))ids.add('sat-strings');
- if(ARMY_INSTRUMENTS.has(inst)){ids.add('tue-army');ids.add('sat-army')}
- return ids;
-}
-function assignMatchingTeam(rows,name,part){
- if(!part)return;
- const target=rows.find(r=>r[0]===part);
- if(!target)return;
- stripMember(rows,name);putMember(rows,name,part);
-}
-function propagateRosterChange(change){
- if(!change)return;
- if(!isSharedMeeting(activeMeeting)){
-  // 예배위원 명단에서의 수정은 예배위원 모임만 변경한다.
-  if(change.type==='rename')renameAttendanceHistory(change.oldName,change.name,[activeMeeting]);
-  return;
- }
- if(change.type==='rename'){
-  const affected=SHARED_MEETING_IDS.filter(id=>id===activeMeeting||hasMember(readMeetingRoster(id),change.oldName));
-  renameAttendanceHistory(change.oldName,change.name,affected);
- }
- const activeTeam=TEAM_ROSTER.find(r=>namesInRow(r).includes(change.name));
- const targets=change.type==='add'?newMemberMeetings(change.instrument):new Set(SHARED_MEETING_IDS);
- // 이미 다른 분류 모임에 속한 사람은 신규 등록 후에도 이름·악기가 동일해야 한다.
- if(change.type==='add')for(const id of SHARED_MEETING_IDS){
-  if(hasMember(readMeetingRoster(id),change.name))targets.add(id);
- }
- for(const id of targets){
+function linkedTuesdayRename(oldName,newName){
+ if(!SYNC_MEETINGS.includes(activeMeeting))return;
+ for(const id of SYNC_MEETINGS){
   if(id===activeMeeting)continue;
-  let roster=readMeetingRoster(id),teams=readMeetingTeams(id),rosterChanged=false,teamChanged=false;
-  if(change.type==='rename'){
-   if(hasMember(roster,change.oldName)){
-    for(const row of roster)row[1]=namesInRow(row).map(n=>n===change.oldName?change.name:n).join(' ');
-    rosterChanged=true;
+  const rows=readMeetingRoster(id);
+  for(const row of rows)row[1]=row[1].split(/\s+/).filter(Boolean).map(n=>n===oldName?newName:n).join(' ');
+  writeMeetingRoster(id,rows);
+  try{
+   const teams=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-teams-'+id)||'null')||cloneRows(TEAM_DEFAULTS[id]);
+   if(validateRows(teams)){
+    for(const row of teams)row[1]=row[1].split(/\s+/).filter(Boolean).map(n=>n===oldName?newName:n).join(' ');
+    localStorage.setItem(MULTI_PREFIX+'-teams-'+id,JSON.stringify(teams));
    }
-   for(const row of teams){if(namesInRow(row).includes(change.oldName)){
-    row[1]=namesInRow(row).map(n=>n===change.oldName?change.name:n).join(' ');teamChanged=true;
-   }}
-  }else if(change.type==='remove'){
-   rosterChanged=stripMember(roster,change.name);
-   teamChanged=stripMember(teams,change.name);
-  }else if(change.type==='add'){
-   const already=hasMember(roster,change.name);
-   if(already){
-    // 같은 이름이 이미 해당 모임에 있으면 중복 등록하지 않고 악기만 통일한다.
-    const original=roster.find(r=>namesInRow(r).includes(change.name));
-    if(original&&original[0]!==change.instrument){
-     changeMemberGroup(roster,change.name,change.instrument);rosterChanged=true;
-    }
-   }else{
-    putMember(roster,change.name,change.instrument);rosterChanged=true;
-   }
-   if(id==='sat-strings'){
-    const strings=teams.find(r=>r[0]==='현악파트');
-    if(strings&&!hasMember(teams,change.name)){
-     putMember(teams,change.name,'현악파트');teamChanged=true;
-    }
-   }else if(activeTeam&&teams.some(r=>r[0]===activeTeam[0])){
-    const before=JSON.stringify(teams);
-    assignMatchingTeam(teams,change.name,activeTeam[0]);
-    if(JSON.stringify(teams)!==before)teamChanged=true;
-   }
-  }else if(change.type==='moveMember'){
-   if(changeMemberGroup(roster,change.name,change.instrument)){
-    alignSharedOrder(roster,ROSTER);rosterChanged=true;
-   }
-  }else if(change.type==='reorderInstrument'){
-   roster=alignGroupOrder(roster,ROSTER);rosterChanged=true;
-  }else if(change.type==='addInstrument'){
-   // An empty instrument is relevant to the master and the corresponding section only.
-   const eligible=id==='tue-all'||(STRING_INSTRUMENTS.has(change.instrument)?id==='sat-strings':ARMY_INSTRUMENTS.has(change.instrument)&&['tue-army','sat-army'].includes(id));
-   if(eligible&&!roster.some(r=>r[0]===change.instrument)){
-    roster.push([change.instrument,'']);rosterChanged=true;
-   }
-  }
-  if(rosterChanged){writeMeetingRoster(id,roster);if(change.type==='reorderInstrument')updateOtherTemplateOrder(id,roster)}
-  if(teamChanged)writeMeetingTeams(id,teams);
+  }catch(e){console.warn('연동 팀명단 수정 실패',e)}
  }
 }
-function propagateTeamChange(change){
- if(!change||!isSharedMeeting(activeMeeting))return;
- for(const id of SHARED_MEETING_IDS){
+function linkedTuesdayReconcile(previousRows=null){
+ if(!SYNC_MEETINGS.includes(activeMeeting))return;
+ const before=previousRows||readMeetingRoster(activeMeeting);
+ const beforeNames=new Set(before.flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
+ const afterNames=new Set(ROSTER.flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
+ const deleted=[...beforeNames].filter(name=>!afterNames.has(name));
+ const added=[...afterNames].filter(name=>!beforeNames.has(name));
+ const sourceMap=new Map(ROSTER.flatMap(([inst,names])=>names.split(/\s+/).filter(Boolean).map(name=>[name,inst])));
+ for(const id of SYNC_MEETINGS){
   if(id===activeMeeting)continue;
-  const roster=readMeetingRoster(id);let teams=readMeetingTeams(id),changed=false;
-  if(change.type==='moveMember'||change.type==='assignMember'){
-   if(hasMember(roster,change.name)&&teams.some(r=>r[0]===change.part)){
-    assignMatchingTeam(teams,change.name,change.part);
-    alignSharedOrder(teams,TEAM_ROSTER);changed=true;
-   }
-  }else if(change.type==='reorderTeam'){
-   teams=alignGroupOrder(teams,TEAM_ROSTER);changed=true;
-  }else if(change.type==='renameTeam'){
-   const row=teams.find(r=>r[0]===change.oldName);
-   if(row&&!teams.some(r=>r[0]===change.name)){row[0]=change.name;changed=true}
-  }else if(change.type==='removeTeam'){
-   const index=teams.findIndex(r=>r[0]===change.name);
-   if(index>=0){teams.splice(index,1);changed=true}
-  }else if(change.type==='addTeam'){
-   // The one-group string roster has its own structure; do not add unrelated teams there.
-   if(id!=='sat-strings'&&activeMeeting!=='sat-strings'&&!teams.some(r=>r[0]===change.name)){
-    teams.push([change.name,'']);changed=true;
-   }
+  const target=readMeetingRoster(id);
+  const originalMembers=new Set(target.flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
+  for(const row of target)row[1]=row[1].split(/\s+/).filter(name=>name&&!deleted.includes(name)&&(!sourceMap.has(name)||sourceMap.get(name)===row[0])).join(' ');
+  for(const [name,inst] of sourceMap){
+   // Existing shared members keep their membership, but follow the new instrument.
+   // Newly added members go to the overall meeting and matching instrumental meeting.
+   const allowNew=added.includes(name)&&(id==='tue-all'||(id==='tue-army'||id==='sat-army')&& !['Vn.','Va.','Vc.','Cb.'].includes(inst)||id==='sat-strings'&&['Vn.','Va.','Vc.'].includes(inst));
+   if(!originalMembers.has(name)&&!allowNew)continue;
+   let row=target.find(r=>r[0]===inst);
+   if(!row){row=[inst,''];target.push(row)}
+   const members=row[1].split(/\s+/).filter(Boolean);
+   if(!members.includes(name))members.push(name);
+   row[1]=members.join(' ');
   }
-  if(changed)writeMeetingTeams(id,teams);
+  // Keep common names in the same order within each instrument, retain target-only members.
+  for(const row of target){
+   const members=row[1].split(/\s+/).filter(Boolean);
+   const ordered=ROSTER.find(r=>r[0]===row[0])?.[1].split(/\s+/).filter(Boolean)||[];
+   const ranked=new Map(ordered.map((n,i)=>[n,i]));
+   row[1]=members.map((n,i)=>({n,i})).sort((a,b)=>{
+    if(ranked.has(a.n)&&ranked.has(b.n))return ranked.get(a.n)-ranked.get(b.n);
+    return a.i-b.i;
+   }).map(x=>x.n).join(' ');
+  }
+  writeMeetingRoster(id,target);
+  if(deleted.length){
+   try{
+    const teams=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-teams-'+id)||'null')||cloneRows(TEAM_DEFAULTS[id]);
+    if(validateRows(teams)){
+     for(const row of teams)row[1]=row[1].split(/\s+/).filter(n=>!deleted.includes(n)).join(' ');
+     localStorage.setItem(MULTI_PREFIX+'-teams-'+id,JSON.stringify(teams));
+    }
+   }catch(e){console.warn('연동 팀명단 삭제 실패',e)}
+  }
  }
 }
+
 function saveTeamRoster(){try{localStorage.setItem(MULTI_PREFIX+'-teams-'+activeMeeting,JSON.stringify(TEAM_ROSTER))}catch(e){console.warn('팀 저장 실패',e)}}
 function loadTeamRoster(){try{
  const rows=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-teams-'+activeMeeting)||'null');
@@ -525,7 +371,7 @@ const legacyTemplateKey='sat-committee-template-v1';
 const DEFAULT_INSTRUMENTS=ROSTER.map(r=>r[0]);
 const DEFAULT_DIVIDER='ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ ㅡ';
 function defaultTemplate(){
- return ['{날짜}','','참석 {참석}명 (부분 {부분}명)','지도.',...ROSTER.map(r=>r[0]),'',DEFAULT_DIVIDER,'*불참 {불참}명 (미보고 {미보고}명)','{불참사유별}'].join('\n');
+ return ['{날짜}','','참석 {참석}명 (부분 {부분}명)','지도.',...ROSTER.map(r=>r[0]),'',DEFAULT_DIVIDER,'','*불참 {불참}명 (미보고 {미보고}명)','','{불참사유별}'].join('\n');
 }
 let templateText='';
 function loadReasons(){try{
@@ -558,6 +404,26 @@ function ensureInstrumentLines(text){
  }
  return lines.join('\n');
 }
+// 모든 모임의 기존 저장 양식도 동일하게: 구분선 → 빈 줄 → 불참 제목 → 빈 줄 → 사유별 명단.
+function normalizeAbsenceSpacing(source){
+ const lines=String(source).replace(/\r\n/g,'\n').split('\n');
+ const divider=text=>/^(?:ㅡ\s*){3,}$/.test(text)||/^[=\-─━_]{5,}$/.test(text);
+ const heading=text=>/^\*?불참\s/.test(text)||(text.includes('{불참}')&&!text.includes('{불참사유별}'));
+ for(let i=0;i<lines.length;i++){
+  if(!heading(lines[i].trim()))continue;
+  let before=i;
+  while(before>0&&!lines[before-1].trim())before--;
+  if(before>0&&divider(lines[before-1].trim())){
+   lines.splice(before,i-before,'');
+   i=before+1;
+  }
+  let end=i+1;
+  while(end<lines.length&&!lines[end].trim())end++;
+  if(end<lines.length)lines.splice(i+1,end-(i+1),'');
+  break;
+ }
+ return lines.join('\n');
+}
 function loadTemplate(){
  templateText=defaultTemplate();
  try{
@@ -568,7 +434,7 @@ function loadTemplate(){
    if(typeof previous==='string'&&previous.includes('{불참사유별}'))templateText=previous;
   }
  }catch(e){console.warn('양식 불러오기 실패',e)}
- templateText=ensureInstrumentLines(templateText.split('\n').filter(line=>line.trim()!=='pa.'||ROSTER.some(r=>r[0]==='pa.')).join('\n'));
+ templateText=normalizeAbsenceSpacing(ensureInstrumentLines(templateText.split('\n').filter(line=>line.trim()!=='Cb.' && (line.trim()!=='pa.'||ROSTER.some(r=>r[0]==='pa.'))).join('\n')));
 }
 function saveTemplateStorage(){try{
  localStorage.setItem(MULTI_PREFIX+'-template-'+activeMeeting,JSON.stringify(templateText));
@@ -628,7 +494,7 @@ function label(name,p){
   const visible=[reason,partialTime].filter(Boolean).join('/');
   return visible?`${name}(${visible})`:name;
 }
-function reasonCategory(p){if(p.status==='미보고')return '미보고';const v=(p.reason||'').trim();return REASONS.includes(v)?v:'사유 미기재/확인 필요'}
+function reasonCategory(p){if(p.status==='미보고')return '미보고';const v=String(p.reason||'').trim();return v||'사유 미기재/확인 필요'}
 function five(items){const lines=[];for(let i=0;i<items.length;i+=5)lines.push(items.slice(i,i+5).join(' '));return lines.join('\n')}
 function titleDate(){
  const s=state.date||localDate(),[y,m,d]=s.split('-').map(Number),dt=new Date(y,m-1,d);
@@ -661,13 +527,19 @@ function compute(){
  group['사유 미기재/확인 필요']=[];
  for(const {name,instrument} of attendancePeople()){const p=get(name);
   if(p.status==='출'||p.status==='부분'){counts.att++;if(p.status==='부분')counts.partial++;att[instrument].push(label(name,p))}
-  else{counts.abs++;if(p.status==='미보고'){counts.unreported++;missing.push(name)}abs[instrument].push(label(name,p));const category=reasonCategory(p);group[category].push(name)}
+  else{counts.abs++;if(p.status==='미보고'){counts.unreported++;missing.push(name)}abs[instrument].push(label(name,p));const category=reasonCategory(p);if(!Object.prototype.hasOwnProperty.call(group,category))group[category]=[];group[category].push(name)}
  }
  // 주일 예배위원은 출결 대상에서 제외하되 사유별 출력에는 빠지지 않도록 한다.
  if(activeMeeting==='tue-army')group['예배위원'].push(...excludedSundayNames());
- const reasonLines=Object.entries(group).filter(([,names])=>names.length).map(([reason,names])=>five(names)+'('+reason+')').join('\n');
+ // 목록에 없는 입력 사유는 입력된 원문으로 그룹화하고, 미보고 바로 앞에 배치한다.
+ const registered=new Set(REASONS);
+ const unknownReasons=Object.keys(group).filter(reason=>!registered.has(reason)&&reason!=='사유 미기재/확인 필요');
+ const reasonOrder=[...REASONS.filter(reason=>reason!=='미보고'),...unknownReasons];
+ if(group['사유 미기재/확인 필요'].length)reasonOrder.push('사유 미기재/확인 필요');
+ reasonOrder.push('미보고');
+ const reasonLines=reasonOrder.filter(reason=>group[reason]?.length).map(reason=>five(group[reason])+'('+reason+')').join('\n');
  const tokens={'날짜':'\u2060'+titleDate(),'참석':counts.att,'부분':counts.partial,'불참':counts.abs,'미보고':counts.unreported,'총원':counts.total,'실제불참':counts.abs-counts.unreported,'불참사유별':reasonLines};
- const source=ensureInstrumentLines(templateText);
+ const source=normalizeAbsenceSpacing(ensureInstrumentLines(templateText));
  const lines=source.split('\n').map(line=>{
    const name=line.trim();
    return Object.prototype.hasOwnProperty.call(att,name)?line+ (att[name].length?' '+five(att[name]).replace(/\n/g,'\n    '):''):line;
@@ -788,7 +660,7 @@ function applyBulk(){
  m.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 async function copy(text,button){try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text)}else{const el=document.createElement('textarea');el.value=text;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();const ok=document.execCommand('copy');el.remove();if(!ok)throw Error('지원하지 않음')}const old=button.textContent;button.textContent='복사 완료';setTimeout(()=>button.textContent=old,1700)}catch(e){window.prompt('자동 복사가 지원되지 않습니다. 아래 텍스트를 직접 복사하세요.',text)}}
-migrateJeongsinToCb();loadRoster();loadReasons();migrateExistingRosterAndReasons();ensureSundayReason();loadTeamRoster();loadTemplate();
+loadRoster();loadReasons();migrateExistingRosterAndReasons();ensureSundayReason();loadTeamRoster();loadTemplate();
  const initialDate=localStorage.getItem(MULTI_PREFIX+'-last-date');
  state.date=/^\d{4}-\d\d-\d\d$/.test(initialDate||'')?initialDate:localDate();load();
 const yearSelect=document.getElementById('yearSelect'),monthSelect=document.getElementById('monthSelect'),daySelect=document.getElementById('daySelect');
@@ -852,7 +724,7 @@ function moveRoster(fromRi,fromNi,toRi,toNi=null){
  to.splice(toNi===null?to.length:Math.min(Math.max(toNi,0),to.length),0,name);
  ROSTER[fromRi][1]=from.join(' ');ROSTER[toRi][1]=to.join(' ');
  selectedRoster=null;draggingRoster=null;
- commitRoster(fromRi===toRi?`${name} 님의 순서를 변경했습니다.`:`${name} 님을 ${ROSTER[fromRi][0]} → ${ROSTER[toRi][0]} 악기로 이동했습니다.`,ROSTER[toRi][0],{type:'moveMember',name,instrument:ROSTER[toRi][0]});
+ commitRoster(fromRi===toRi?`${name} 님의 순서를 변경했습니다.`:`${name} 님을 ${ROSTER[fromRi][0]} → ${ROSTER[toRi][0]} 악기로 이동했습니다.`,ROSTER[toRi][0]);
 }
 function selectOrMoveTo(ri,ni){
  selectedInstrument=null;
@@ -876,7 +748,7 @@ function reorderInstrument(fromRi,toRi){
   const leading=(line.match(/^\s*/)||[''])[0],trailing=(line.match(/\s*$/)||[''])[0];
   return leading+order[next++]+trailing;
  }).join('\n');
- commitRoster(`${moved[0]} 악기를 ${toRi+1}번째로 이동했습니다. ⑤ 출결 결과에도 반영했습니다.`,moved[0],{type:'reorderInstrument'});
+ commitRoster(`${moved[0]} 악기를 ${toRi+1}번째로 이동했습니다. ⑤ 출결 결과에도 반영했습니다.`,moved[0]);
 }
 function selectInstrumentForMove(ri){
  selectedRoster=null;selectedInstrument=ri;
@@ -893,9 +765,6 @@ function instrumentClick(ri){
 function renderRoster(){
  const root=document.getElementById('rosterList');root.replaceChildren();
  document.getElementById('rosterTotal').textContent=`총 ${PEOPLE.length}명`;
- document.getElementById('rosterSyncGuide').textContent=isSharedMeeting(activeMeeting)
-  ? '이 모임의 공통 인원 이름·악기·파트 변경은 화요일 전체·화요일 군악대·토요일 군악대·토요일 현악 모임에 반영됩니다. 각 모임의 대상 인원은 구분하고, (토) 관현악 예배위원 모임은 연동하지 않습니다.'
-  : '이 모임의 악기별·파트별 명단은 다른 네 모임과 연동되지 않는 독립 명단입니다.';
  const sub=document.getElementById('headerCount');if(sub)sub.textContent=`${MEETING_LABELS[activeMeeting]} · 현재 ${PEOPLE.length}명 기준`;
  ROSTER.forEach(([inst,names],ri)=>{
   const row=document.createElement('div');row.className='roster-row';row.dataset.ri=String(ri);
@@ -967,19 +836,19 @@ function renderRoster(){
  });
 }
 function rosterNotice(message){const el=document.getElementById('rosterMessage');el.className='notice success';el.textContent=message}
-function commitRoster(message,preferred,change=null){rebuildPeople();syncTeams();saveTeamRoster();templateText=ensureInstrumentLines(templateText);saveRoster();propagateRosterChange(change);save();saveTemplateStorage();refreshInstrumentSelect(preferred);renderRoster();renderTeams();renderSunday();renderResults();rosterNotice(message)}
+function commitRoster(message,preferred){const beforeSync=readMeetingRoster(activeMeeting);rebuildPeople();syncTeams();saveTeamRoster();templateText=ensureInstrumentLines(templateText);saveRoster();linkedTuesdayReconcile(beforeSync);save();saveTemplateStorage();refreshInstrumentSelect(preferred);renderRoster();renderTeams();renderSunday();renderResults();rosterNotice(message)}
 function existsRoster(name,original=''){return PEOPLE.some(p=>cleanName(p.name)===cleanName(name)&&p.name!==original)}
 function modifyRoster(ri,ni,action){
  const list=ROSTER[ri][1].split(/\s+/).filter(Boolean);const old=list[ni];
  if(action==='edit'){
   const raw=prompt('수정할 이름을 입력하세요.',old);if(raw===null)return;const next=raw.trim();
   if(!next||/\s/.test(next)){alert('이름은 공백 없이 입력하세요.');return}
-  if(existsRoster(next,old)||globalMemberCollision(next,old)){alert('다른 모임을 포함해 이미 등록된 이름입니다.');return}
-  list[ni]=next;if(next!==old){replaceTeamName(old,next);if(state.people[old]){state.people[next]=state.people[old];delete state.people[old]}if(state.excludedSunday)state.excludedSunday=state.excludedSunday.map(n=>n===old?next:n)}
+  if(existsRoster(next,old)){alert('이미 등록된 이름입니다.');return}
+  list[ni]=next;if(next!==old){replaceTeamName(old,next);linkedTuesdayRename(old,next);if(SYNC_MEETINGS.includes(activeMeeting)){const saved=readMeetingRoster(activeMeeting);for(const row of saved)row[1]=row[1].split(/\s+/).filter(Boolean).map(n=>n===old?next:n).join(' ');writeMeetingRoster(activeMeeting,saved)}if(state.people[old]){state.people[next]=state.people[old];delete state.people[old]}if(state.excludedSunday)state.excludedSunday=state.excludedSunday.map(n=>n===old?next:n)}
  }else if(action==='remove'){
-  if(!confirm(`${old} 님을 ${isSharedMeeting(activeMeeting)?'연동되는 4개 모임':'(토) 관현악 예배위원 모임'} 명단에서 삭제할까요?\n기존 날짜별 출결 기록은 보존됩니다.`))return;list.splice(ni,1);removeTeamName(old);/* 기존 출결 기록은 삭제하지 않고 명단에서만 제외 */if(state.excludedSunday)state.excludedSunday=state.excludedSunday.filter(n=>n!==old);
+  if(!confirm(`${old} 님을 명단에서 삭제할까요?`))return;list.splice(ni,1);removeTeamName(old);delete state.people[old];if(state.excludedSunday)state.excludedSunday=state.excludedSunday.filter(n=>n!==old);
  }else{return}
- ROSTER[ri][1]=list.join(' ');commitRoster(isSharedMeeting(activeMeeting)?'연결된 모임에도 명단 변경사항을 반영했습니다.':'예배위원 모임 명단만 변경했습니다.',undefined,action==='edit'?(list[ni]!==old?{type:'rename',oldName:old,name:list[ni]}:null):{type:'remove',name:old});
+ ROSTER[ri][1]=list.join(' ');commitRoster('명단 변경사항을 저장했습니다.');
 }
 const rosterInstrument=document.getElementById('rosterInstrument');
 const ADD_INSTRUMENT_OPTION='__new_instrument__';
@@ -1011,8 +880,8 @@ function addRoster(){
  if(!existing)ROSTER[index][1]=[ROSTER[index][1],name].filter(Boolean).join(' ');
  TEAM_ROSTER[partIndex][1]=[TEAM_ROSTER[partIndex][1],existing?.name||name].filter(Boolean).join(' ');
  field.value='';
- if(!existing)commitRoster(`${name} 님을 ${inst} 악기와 ${part} 파트에 추가했습니다.${isSharedMeeting(activeMeeting)?' 해당 악기의 연동 모임에도 반영했습니다.':''}`,inst,{type:'add',name,instrument:inst});
- else commitTeams(`${name} 님을 ${part} 파트에 배정했습니다. (기존 악기는 ${existing.instrument})`,{type:'assignMember',name:existing.name,part});
+ if(!existing)commitRoster(`${name} 님을 ${inst} 악기와 ${part} 파트에 추가했습니다.`,inst);
+ else commitTeams(`${name} 님을 ${part} 파트에 배정했습니다. (기존 악기는 ${existing.instrument})`);
 }
 document.getElementById('addRoster').addEventListener('click',addRoster);
 document.getElementById('rosterName').addEventListener('keydown',e=>{if(e.key==='Enter')addRoster()});
@@ -1024,7 +893,7 @@ function addInstrument(){
  const name=normalizedInstrumentName(raw);
  if(!name||/[\r\n/]/.test(name)){alert('악기 이름을 입력하세요. 줄바꿈과 /는 사용할 수 없습니다.');return}
  if(ROSTER.some(r=>r[0].toLocaleLowerCase()===name.toLocaleLowerCase())){alert('이미 등록된 악기입니다.');return}
- ROSTER.push([name,'']);commitRoster(`${name} 악기를 추가했습니다.`,name,{type:'addInstrument',instrument:name});
+ ROSTER.push([name,'']);commitRoster(`${name} 악기를 추가했습니다.`,name);
 }
 function managerButton(label,title,fn,disabled=false,cls='secondary'){
  const button=document.createElement('button');button.type='button';button.textContent=label;button.title=title;button.setAttribute('aria-label',title);button.className=cls;button.disabled=disabled;button.addEventListener('click',fn);return button;
@@ -1142,7 +1011,7 @@ document.getElementById('newReason').addEventListener('keydown',e=>{if(e.key==='
 let selectedTeamMember=null,draggingTeamMember=null,selectedTeamRow=null,draggingTeamRow=null;
 function teamMembers(i){return TEAM_ROSTER[i][1].split(/\s+/).filter(Boolean)}
 function teamNotice(message){messageTo('teamMessage',message)}
-function commitTeams(message,change=null){selectedTeamMember=null;selectedTeamRow=null;saveTeamRoster();propagateTeamChange(change);renderTeams();renderResults();if(message)teamNotice(message)}
+function commitTeams(message){selectedTeamMember=null;selectedTeamRow=null;saveTeamRoster();renderTeams();renderResults();if(message)teamNotice(message)}
 function moveTeamMember(fromTeam,fromIndex,toTeam,toIndex=null){
  if(fromTeam===toTeam&&fromIndex===toIndex){selectedTeamMember=null;renderTeams();return}
  const from=teamMembers(fromTeam),to=fromTeam===toTeam?from:teamMembers(toTeam);
@@ -1150,7 +1019,7 @@ function moveTeamMember(fromTeam,fromIndex,toTeam,toIndex=null){
  let pos=toIndex===null?to.length:Math.max(0,Math.min(toIndex,to.length));
  if(fromTeam===toTeam&&fromIndex<pos)pos--;
  to.splice(pos,0,name);TEAM_ROSTER[fromTeam][1]=from.join(' ');TEAM_ROSTER[toTeam][1]=to.join(' ');
- commitTeams(`${name} 님을 ${TEAM_ROSTER[toTeam][0]} 파트로 이동하거나 순서를 변경했습니다.`,{type:'moveMember',name,part:TEAM_ROSTER[toTeam][0]});
+ commitTeams(`${name} 님을 ${TEAM_ROSTER[toTeam][0]} 파트로 이동하거나 순서를 변경했습니다.`);
 }
 function teamNameClick(ti,ni){
  if(selectedTeamRow!==null){selectedTeamRow=null;renderTeams();return}
@@ -1165,7 +1034,7 @@ function teamHeadingClick(ti){
 function moveTeamRow(from,to){
  if(from===to){selectedTeamRow=null;renderTeams();return}
  if(from<0||to<0||from>=TEAM_ROSTER.length||to>=TEAM_ROSTER.length)return;
- const [item]=TEAM_ROSTER.splice(from,1);TEAM_ROSTER.splice(to,0,item);commitTeams(`${item[0]} 파트 순서를 변경했습니다.`,{type:'reorderTeam'});
+ const [item]=TEAM_ROSTER.splice(from,1);TEAM_ROSTER.splice(to,0,item);commitTeams(`${item[0]} 파트 순서를 변경했습니다.`);
 }
 const ADD_PART_OPTION='__new_part__';
 const lastPartSelections={teamAssignment:'',rosterPart:''};
@@ -1190,7 +1059,7 @@ function addPartFromSelect(id){
   alert('파트 이름을 확인하세요. 이미 있는 이름이나 /, 줄바꿈은 사용할 수 없습니다.');return;
  }
  TEAM_ROSTER.push([name,'']);
- commitTeams(`${name} 파트를 추가했습니다.`,{type:'addTeam',name});
+ commitTeams(`${name} 파트를 추가했습니다.`);
  refreshPartSelector('teamAssignment',name);
  refreshPartSelector('rosterPart',name);
 }
@@ -1245,12 +1114,12 @@ function renderTeams(){
   label.addEventListener('pointerup',e=>endTouch(e,false));label.addEventListener('pointercancel',e=>endTouch(e,true));
   const actions=document.createElement('div');actions.className='team-name-actions';
   const edit=document.createElement('button');edit.type='button';edit.className='mini-action';edit.textContent='✎';edit.title=title+' 파트 이름 수정';edit.setAttribute('aria-label',title+' 파트 이름 수정');edit.addEventListener('click',()=>{
-   const value=prompt('새 파트 이름',title);if(value===null)return;const next=value.trim();if(!next||/[/\r\n]/.test(next)||TEAM_ROSTER.some(([n],i)=>i!==ti&&n===next)){alert('사용할 수 없는 파트 이름입니다.');return}TEAM_ROSTER[ti][0]=next;commitTeams('파트 이름을 변경했습니다.',{type:'renameTeam',oldName:title,name:next});
+   const value=prompt('새 파트 이름',title);if(value===null)return;const next=value.trim();if(!next||/[/\r\n]/.test(next)||TEAM_ROSTER.some(([n],i)=>i!==ti&&n===next)){alert('사용할 수 없는 파트 이름입니다.');return}TEAM_ROSTER[ti][0]=next;commitTeams('파트 이름을 변경했습니다.');
   });
   const remove=document.createElement('button');remove.type='button';remove.className='mini-action remove';remove.textContent='×';remove.title=title+' 파트 삭제';remove.setAttribute('aria-label',title+' 파트 삭제');remove.addEventListener('click',()=>{
    const size=teamMembers(ti).length;
    if(!confirm(`${title} 파트를 삭제할까요?${size?`\n소속 ${size}명은 악기별 명단에 그대로 남으며 최종 출결에도 포함됩니다. 다른 파트로 다시 배정할 수 있습니다.`:''}`))return;
-   TEAM_ROSTER.splice(ti,1);commitTeams(`${title} 파트를 삭제했습니다. ${size?`소속 ${size}명은 악기별 명단에 남아 있습니다.`:''}`,{type:'removeTeam',name:title});
+   TEAM_ROSTER.splice(ti,1);commitTeams(`${title} 파트를 삭제했습니다. ${size?`소속 ${size}명은 악기별 명단에 남아 있습니다.`:''}`);
   });
   actions.append(edit,remove);side.append(label,actions);row.appendChild(side);
   const members=document.createElement('div');members.className='roster-members';
@@ -1301,8 +1170,8 @@ document.getElementById('assignTeam').addEventListener('click',()=>{
  if(!already){ROSTER[instIndex][1]=[ROSTER[instIndex][1],name].filter(Boolean).join(' ')}
  TEAM_ROSTER[teamIndex][1]=[TEAM_ROSTER[teamIndex][1],name].filter(Boolean).join(' ');
  field.value='';
- if(!already)commitRoster(`${name} 님을 ${team}에 추가하고 악기별 명단에도 등록했습니다.`,inst,{type:'add',name,instrument:inst});
- commitTeams(`${name} 님을 ${team}에 추가했습니다.`,{type:'assignMember',name,part:team});
+ if(!already)commitRoster(`${name} 님을 ${team}에 추가하고 악기별 명단에도 등록했습니다.`,inst);
+ commitTeams(`${name} 님을 ${team}에 추가했습니다.`);
 });
 document.getElementById('newTeamPerson').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('assignTeam').click()});
 
@@ -1356,11 +1225,4 @@ renderSunday();
 renderResults();
 const previousMeeting=localStorage.getItem(MULTI_PREFIX+'-last-meeting');
 if(previousMeeting&&MEETING_LABELS[previousMeeting]&&previousMeeting!==activeMeeting)switchMeeting(previousMeeting);
-// Other browser tabs on the same site update automatically when a shared roster changes.
-window.addEventListener('storage',e=>{
- if(!e.key||!(e.key.startsWith(MULTI_PREFIX+'-roster-')||e.key.startsWith(MULTI_PREFIX+'-teams-')||e.key.startsWith(MULTI_PREFIX+'-attendance-')))return;
- const relevant=e.key===MULTI_PREFIX+'-roster-'+activeMeeting||e.key===MULTI_PREFIX+'-teams-'+activeMeeting||e.key===stateKey(activeMeeting,state.date);
- if(!relevant)return;
- loadRoster();loadTeamRoster();load();refreshInstrumentSelect();renderRoster();renderTeams();renderSunday();renderResults();
-});
 </script></body></html>
