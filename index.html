@@ -118,6 +118,14 @@
  .member-add-panel button{grid-column:4;min-width:0;padding:10px 7px;font-size:13px}
 }
 @media(max-width:360px){.member-add-panel label{font-size:12px}.member-add-panel .row{gap:5px}}
+
+.dual-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.dual-results .previewArea{min-width:0;margin-top:0;background:#fbfdfa;border:1px solid #dae8dd;border-radius:12px;padding:13px}
+.dual-results .result{background:#fff;min-height:460px;max-height:630px;overflow:auto;font-size:13px}
+.result-title{justify-content:space-between;margin-bottom:5px}.result-title h2{margin:0;font-size:16px}
+.result-title button{padding:8px 10px;font-size:12px}
+.dual-results .hint{margin-bottom:12px}
+@media(max-width:850px){.dual-results{grid-template-columns:1fr}.dual-results .result{min-height:300px;max-height:none}}
 </style>
 </head>
 <body><main>
@@ -147,10 +155,26 @@
 <div id="teamMessage" class="notice hidden" role="status"></div></div>
 <div id="rosterMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><p class="hint" id="reasonHint">현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.</p><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div class="row" style="margin:0 0 10px"><button type="button" id="resetReasonOrder" class="outline">기존 순서 적용</button></div><div id="reasonList" class="manager-list"></div><div id="reasonMessage" class="notice hidden" role="status"></div></section>
-<section class="section" id="output"><h2>⑤ 출결 결과</h2><p class="muted" id="outputMeetingName"></p>
-<div class="output-tabs" role="group" aria-label="출결 출력 양식"><button id="formatInstrument" class="active" type="button">기존 출결 양식</button><button id="formatTeam" class="secondary" type="button">최종 출결</button></div>
-
-<div id="stats" class="stats"></div><div id="checkMessage" class="notice" role="status"></div><div class="row" style="margin-top:14px"><button id="copyAll">선택한 양식 전체 복사</button><button class="secondary" id="copyAtt">참석 부분만 복사</button><button class="secondary" id="copyAbsent">불참 부분만 복사</button></div><div class="previewArea"><h2 id="resultHeading">복사용 최종 텍스트 · 기존 출결 양식</h2><div id="result" class="result"></div></div></section>
+<section class="section" id="output"><h2>⑤ 출결 결과</h2>
+<p class="muted" id="outputMeetingName"></p>
+<div id="stats" class="stats"></div>
+<div id="checkMessage" class="notice" role="status"></div>
+<!-- Original controls retained for backwards-compatible calculation handlers, visually hidden. -->
+<div class="hidden" aria-hidden="true"><button id="formatInstrument" type="button"></button><button id="formatTeam" type="button"></button><button id="copyAll" type="button"></button><button id="copyAtt" type="button"></button><button id="copyAbsent" type="button"></button><div id="resultHeading"></div><div id="result"></div></div>
+<div class="dual-results">
+ <div class="previewArea">
+  <div class="row result-title"><h2>최종출결 1</h2><button id="copyTraditionalAll" type="button">전체 복사</button></div>
+  <p class="hint">기존 출결 양식 · 악기별 참석 및 불참</p>
+  <div id="traditionalResult" class="result" aria-label="기존 출결 양식 결과"></div>
+  <div class="row" style="margin-top:10px"><button class="secondary" id="copyTraditionalAtt" type="button">참석 부분만 복사</button><button class="secondary" id="copyTraditionalAbs" type="button">불참 부분만 복사</button></div>
+ </div>
+ <div class="previewArea">
+  <div class="row result-title"><h2>최종출결 2</h2><button id="copyFinalAll" type="button">전체 복사</button></div>
+  <p class="hint">개인별 최종 출결 · 이름/상태/사유</p>
+  <div id="finalResult" class="result" aria-label="개인별 최종 출결 결과"></div>
+  <div class="row" style="margin-top:10px"><button class="secondary" id="copyFinalAtt" type="button">참석 부분만 복사</button><button class="secondary" id="copyFinalAbs" type="button">불참 부분만 복사</button></div>
+ </div>
+</div></section>
 <footer>입력 데이터는 이 기기의 브라우저에 저장되며 별도 서버로 전송하지 않습니다. 공유 기기에서는 사용 후 초기화하세요.</footer>
 </main>
 <script>
@@ -509,6 +533,8 @@ function renderResults(){
  document.getElementById('result').textContent=displayed.full;
  document.getElementById('resultHeading').textContent='복사용 최종 텍스트 · '+(outputFormat==='team'?'최종 출결':'기존 출결 양식');
  for(const [format,id] of [['instrument','formatInstrument'],['team','formatTeam']]){const b=document.getElementById(id);b.classList.toggle('active',outputFormat===format);b.classList.toggle('secondary',outputFormat!==format)}
+ document.getElementById('traditionalResult').textContent=o.full;
+ document.getElementById('finalResult').textContent=computeTeam().full;
 }
 function displayedResult(){return outputFormat==='team'?computeTeam():compute()}
 
@@ -581,6 +607,17 @@ refreshBulkExample();
 document.getElementById('reset').addEventListener('click',()=>{if(!confirm(`${PEOPLE.length}명 출결 상태를 모두 미보고로 초기화할까요?`))return;state.people={};save();renderResults();document.getElementById('bulkMessage').classList.add('hidden')});
 document.getElementById('copyAll').addEventListener('click',e=>copy(displayedResult().full,e.currentTarget));document.getElementById('copyAtt').addEventListener('click',e=>copy(displayedResult().attText,e.currentTarget));document.getElementById('copyAbsent').addEventListener('click',e=>copy(displayedResult().absText,e.currentTarget));
 for(const [format,id] of [['instrument','formatInstrument'],['team','formatTeam']])document.getElementById(id).addEventListener('click',()=>{outputFormat=format;renderResults()});
+// Always-visible results: independent copy buttons for each original output format.
+for(const [id,format,part] of [
+ ['copyTraditionalAll','instrument','full'],['copyTraditionalAtt','instrument','attText'],['copyTraditionalAbs','instrument','absText'],
+ ['copyFinalAll','team','full'],['copyFinalAtt','team','attText'],['copyFinalAbs','team','absText']
+]){
+ document.getElementById(id).addEventListener('click',e=>{
+  const result=format==='instrument'?compute():computeTeam();
+  copy(result[part],e.currentTarget);
+ });
+}
+
 
 let selectedRoster=null;
 let draggingRoster=null;
