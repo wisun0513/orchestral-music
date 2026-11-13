@@ -146,7 +146,7 @@
 <div id="teamList"></div>
 <div id="teamMessage" class="notice hidden" role="status"></div></div>
 <div id="rosterMessage" class="notice hidden" role="status"></div></section>
-<section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><p class="hint" id="reasonHint">현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.</p><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div id="reasonList" class="manager-list"></div><div id="reasonMessage" class="notice hidden" role="status"></div></section>
+<section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><p class="hint" id="reasonHint">현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.</p><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div class="row" style="margin:0 0 10px"><button type="button" id="resetReasonOrder" class="outline">기존 순서 적용</button></div><div id="reasonList" class="manager-list"></div><div id="reasonMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="output"><h2>⑤ 출결 결과</h2><p class="muted" id="outputMeetingName"></p>
 <div class="output-tabs" role="group" aria-label="출결 출력 양식"><button id="formatInstrument" class="active" type="button">기존 출결 양식</button><button id="formatTeam" class="secondary" type="button">최종 출결</button></div>
 
@@ -167,6 +167,7 @@ const ROSTER=cloneRows(MEETING_DEFAULTS[activeMeeting]);
 let TEAM_ROSTER=cloneRows(TEAM_DEFAULTS[activeMeeting]);
 let rosterTab='instrument';
 const REASONS=['직장','가정사','개인사','건강','행사','타모임','타업무','전도활동','알바','핍박대비','타지','예배위원','미보고','파트미보고'];
+const DEFAULT_REASON_ORDER=Object.freeze([...REASONS]);
 const STATUSES=['출','결','부분','미보고'];
 let PEOPLE=[];
 function rebuildPeople(){PEOPLE=ROSTER.flatMap(([instrument,list])=>list.split(/\s+/).filter(Boolean).map(name=>({name,instrument})));}
@@ -785,6 +786,17 @@ function reasonClick(i){
  if(selectedReason===null){selectedReason=i;renderReasons();messageTo('reasonMessage','이동할 불참 사유를 눌러 주세요. 같은 사유를 누르면 선택이 해제됩니다.');return}
  moveReason(selectedReason,i);
 }
+function resetReasonOrder(){
+ // 기본 제공 사유의 순서만 초기 배치로 복원하고, 별도로 추가/수정한 사유는 삭제하지 않는다.
+ const baseOrder=DEFAULT_REASON_ORDER.filter(reason=>REASONS.includes(reason));
+ const extras=REASONS.filter(reason=>!DEFAULT_REASON_ORDER.includes(reason));
+ const next=[...baseOrder,...extras];
+ const changed=next.some((reason,i)=>REASONS[i]!==reason);
+ selectedReason=null;draggingReason=null;
+ if(changed){REASONS.splice(0,REASONS.length,...next);saveReasons()}
+ renderReasons();renderResults();
+ messageTo('reasonMessage',changed?'기존 순서로 적용했습니다. 추가한 사유는 유지됩니다.':'이미 기존 순서입니다.');
+}
 function renderReasons(){
  const root=document.getElementById('reasonList');root.replaceChildren();
  const showSunday=activeMeeting==='tue-army';
@@ -862,6 +874,7 @@ function deleteReason(i){const reason=REASONS[i];if(reason==='미보고'||reason
  if(!confirm(`${reason} 불참 사유를 삭제할까요?`))return;
  selectedReason=null;REASONS.splice(i,1);saveReasons();renderReasons();renderResults();messageTo('reasonMessage',`${reason} 사유를 삭제했습니다.`);
 }
+document.getElementById('resetReasonOrder').addEventListener('click',resetReasonOrder);
 document.getElementById('addReason').addEventListener('click',addReason);
 document.getElementById('newReason').addEventListener('keydown',e=>{if(e.key==='Enter')addReason()});
 
