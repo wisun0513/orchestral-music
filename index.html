@@ -64,38 +64,89 @@
 @media(max-width:640px){.team-footer .row>*{min-width:0}.team-footer input{min-width:130px}.team-footer select{max-width:100%}}
 .result{max-height:none;white-space:pre-wrap}
 @media(max-width:640px){.roster-row.team-row{grid-template-columns:92px minmax(0,1fr)}.roster-tabs button,.output-tabs button{min-width:0}.sunday-members{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* 불참 사유 목록: 화면 크기와 관계없이 한 줄에 두 항목 표시 */
+#reasonList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;align-items:stretch}
+#reasonList .reason-item{min-width:0;min-height:50px;gap:6px;padding:7px 9px;flex-wrap:nowrap}
+#reasonList .reason-item .manager-title{min-width:0;flex:1 1 auto;overflow-wrap:anywhere;padding:6px 0}
+#reasonList .reason-item button{flex:0 0 29px;width:29px;height:30px;padding:0;display:flex;align-items:center;justify-content:center;font-size:13px}
+#reasonList .reason-item .tag{flex:0 0 auto;white-space:nowrap}
+@media(max-width:640px){
+ #reasonList{gap:6px}
+ #reasonList .reason-item{gap:4px;padding:6px;min-height:47px;flex-wrap:wrap}
+ #reasonList .reason-item .manager-title{min-width:0;flex:1 1 100%;padding:1px 0}
+ #reasonList .reason-item button{flex:0 0 27px;width:27px;height:27px}
+ #reasonList .reason-item .tag{font-size:10px;padding:2px 4px}
+}
+
+/* 모바일 악기별·파트별 명단: 가로 3명씩 표시하여 스크롤 길이를 줄인다. */
+@media(max-width:640px){
+ #rosterList .roster-row,#teamList .roster-row.team-row{display:block;grid-template-columns:none;padding:9px 0}
+ #rosterList .roster-inst,#teamList .roster-inst{padding:0 0 7px;min-width:0}
+ #rosterList .roster-inst .inst-title{display:inline-flex;width:auto;min-width:60px;min-height:30px;padding:4px 8px;justify-content:flex-start}
+ #teamList .roster-inst .inst-title{width:auto;display:inline-flex;min-height:30px;max-width:100%}
+ #teamList .team-name-actions{display:inline-flex!important;vertical-align:middle;margin:0 0 0 6px!important}
+ #teamList .mini-action{width:25px!important;height:25px!important;min-width:25px!important;font-size:14px!important}
+ #rosterList .roster-members,#teamList .roster-members{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;align-content:start;align-items:start}
+ #rosterList .roster-member,#teamList .roster-member{width:100%;max-width:none;min-width:0;flex:none;height:39px;min-height:39px;padding:3px 2px;gap:1px;border-radius:7px}
+ #rosterList .roster-member span,#teamList .roster-member span{font-size:12px;line-height:1.2;min-width:0;flex:1 1 auto;letter-spacing:-.35px}
+ #rosterList .roster-member button,#teamList .roster-member button{width:19px!important;min-width:19px!important;max-width:19px!important;flex:0 0 19px!important;height:26px!important;padding:0;font-size:12px!important}
+ #rosterList .roster-members>.hint,#teamList .roster-members>.hint{grid-column:1/-1}
+ .team-footer{margin-top:6px;margin-bottom:15px}
+}
+@media(max-width:355px){
+ #rosterList .roster-member,#teamList .roster-member{gap:0;padding:3px 1px}
+ #rosterList .roster-member span,#teamList .roster-member span{font-size:11px;letter-spacing:-.55px}
+ #rosterList .roster-member button,#teamList .roster-member button{width:17px!important;min-width:17px!important;max-width:17px!important;flex-basis:17px!important;font-size:11px!important}
+}
+/* 브라우저 로컬 저장 안내: 눈에 띄는 빨간색 테두리 박스 */
+#headerStorageNote{margin:16px 0 4px;padding:14px 16px;border:2px solid #cf4444;border-radius:6px;background:#fff2f2;color:#9b2020;font-size:16px;font-weight:700;line-height:1.55;word-break:keep-all}
+/* 악기별·파트별 명단에 공통으로 쓰는 연한 초록색 인원 추가 박스 */
+.member-add-panel{background:#edf6f0;border:1px solid #bdd8c5;border-radius:12px;padding:14px 15px;margin:12px 0 17px}
+.member-add-panel h3{font-size:15px;margin:0 0 11px;color:#184d3a}
+.member-add-panel .row{gap:8px;margin:0}
+.member-add-panel label{font-size:14px;font-weight:650;color:#204333;white-space:nowrap}
+.member-add-panel select{min-width:87px;max-width:160px}
+.member-add-panel input{flex:1;min-width:155px;width:auto}
+.member-add-panel button{white-space:nowrap}
+@media(max-width:640px){
+ #headerStorageNote{font-size:15px;padding:12px}
+ .member-add-panel{padding:12px 10px}
+ .member-add-panel .row{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr);gap:7px;align-items:center}
+ .member-add-panel select{min-width:0;max-width:100%;width:100%}
+ .member-add-panel input{grid-column:1 / 4;width:100%;min-width:0}
+ .member-add-panel button{grid-column:4;min-width:0;padding:10px 7px;font-size:13px}
+}
+@media(max-width:360px){.member-add-panel label{font-size:12px}.member-add-panel .row{gap:5px}}
 </style>
 </head>
 <body><main>
-<header><h1 id="mainTitle">관현악, 군악대 출결 관리</h1><p class="muted" id="headerCount">현재 57명 기준</p><nav class="tabnav"><a href="#bulk">출결 붙여넣기</a><a href="#roster">명단 관리</a><a href="#reasons">불참 사유 관리</a><a href="#output">출결 결과</a></nav></header>
-<section class="section" id="meetingSection"><h2>① 모임 날짜 및 선택</h2>
+<header><h1 id="mainTitle">관현악, 군악대 출결 관리</h1><p class="muted" id="headerCount">현재 57명 기준</p><nav class="tabnav"><a href="#bulk">출결 붙여넣기</a><a href="#roster">명단 관리</a><a href="#reasons">불참 사유 관리</a><a href="#output">출결 결과</a></nav><p id="headerStorageNote" role="note">각 항목별 변경사항은 현재 브라우저에만 저장됩니다. 다른 기기와 자동 공유되지 않습니다.</p></header>
+<section class="section" id="meetingSection"><h2>① 모임 날짜 및 선택</h2><p class="hint">각 모임을 선택하면 ② 출결 입력 대상, ③ 악기별·파트별 명단, ⑤ 결과가 함께 전환됩니다. 날짜별 출결 기록은 별도로 보관합니다.</p>
 <div class="row" style="margin:12px 0 16px"><label for="meetingSelect"><b>모임 선택</b></label><select id="meetingSelect" style="flex:1;min-width:240px" aria-label="모임 선택"></select></div>
 <div class="row"><label for="yearSelect">날짜 선택</label><select id="yearSelect" class="date-select" aria-label="연도"></select><select id="monthSelect" class="date-select" aria-label="월"></select><select id="daySelect" class="date-select" aria-label="일"></select><button class="secondary" id="todayBtn">오늘</button></div>
-<strong id="dateLabel" class="date-display" style="margin-top:12px" aria-live="polite"></strong><p class="hint">모임을 바꾸면 ② 출결 입력 대상, ③ 악기별·파트별 명단, ⑤ 결과가 함께 전환됩니다. 날짜별 출결 기록은 별도로 보관합니다.</p></section>
+<strong id="dateLabel" class="date-display" style="margin-top:12px" aria-live="polite"></strong></section>
 <section class="section hidden" id="sundaySection">
 <h2 id="sundayTitle">주일 예배위원 제외</h2>
-<p class="muted">선택한 날짜에 해당하는 주일 예배위원 이름만 붙여넣으세요. <b>이번 날짜의 군악대 출결 대상에서는 제외</b>하지만, 출결 결과에는 <b>예배위원 사유</b>로 표시됩니다. 원본 명단에서는 삭제되지 않습니다.</p>
+<p class="muted">선택한 날짜에 해당하는 주일 예배위원 명단을 붙여넣으세요. <b>해당 날짜의 군악대 출결 대상에서는 제외</b>되고, 출결 결과에는 <b>예배위원 사유</b>로 표시됩니다.</p>
 <label for="sundayPaste"><b>제외할 예배위원 명단 붙여넣기</b></label>
 <textarea id="sundayPaste" class="sunday-paste" spellcheck="false" placeholder=""></textarea>
 <div class="row" style="margin-top:10px"><button id="applySunday">주일 예배위원 명단 적용</button><span id="sundayCount" class="pill">제외 0명</span></div>
 <div id="sundayMessage" class="notice hidden" role="status"></div>
-<p class="hint">명단을 비우고 적용하면 제외 설정도 해제됩니다. 제외 명단에 포함된 사람은 출결 대상 인원수에 포함되지 않고, 최종 출결에는 이름/결/예배위원으로 표시됩니다. 조슬기·최성빈도 제외 규칙이 우선합니다.</p></section>
-<section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p>한 사람당 한 줄씩 입력하세요. <b>이름/상태</b>만 입력해도 되고, 필요한 정보만 뒤에 추가하면 됩니다.</p><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
+<p class="hint">명단을 비우고 적용하면 제외 설정도 해제됩니다. 제외 명단에 포함된 사람은 출결 대상 인원수에 포함되지 않고, 최종 출결에는 이름/결/예배위원으로 표시됩니다. 조슬기, 최성빈은 제외됩니다.</p></section>
+<section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
 <div class="roster-tabs" role="group" aria-label="명단 분류"><button id="instrumentTab" type="button" class="active">악기별 명단</button><button id="teamTab" type="button" class="secondary">파트별 명단</button></div>
-<div id="instrumentPanel"><p class="hint">악기·이름 순서를 드래그하거나 길게 눌러 변경할 수 있습니다. ✎ 이름 수정 · × 이름 삭제</p>
-<div class="row" style="margin:12px 0 15px"><label for="rosterInstrument">악기</label><select id="rosterInstrument" aria-label="추가할 악기"></select><input id="rosterName" type="text" placeholder="추가할 이름" aria-label="추가할 이름" style="flex:1;min-width:150px"><button id="addRoster">인원 추가</button></div><div id="rosterList"></div></div>
-<div id="teamPanel" class="hidden"><p class="hint">파트별 명단은 악기별 명단과 같은 인원을 사용합니다. 팀·이름을 드래그하여 순서를 변경할 수 있고, 이름 수정·삭제도 연동됩니다.</p>
+<div id="instrumentPanel"><p class="hint">악기와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. ✎ 이름 수정 · × 이름 삭제</p>
+<div class="member-add-panel"><h3>파트원 추가</h3><div class="row"><label for="rosterInstrument">악기</label><select id="rosterInstrument" aria-label="추가할 악기"></select><label for="rosterPart">파트</label><select id="rosterPart" aria-label="배정할 파트"></select><input id="rosterName" type="text" placeholder="추가할 이름" aria-label="추가할 이름" style="flex:1;min-width:150px"><button id="addRoster">파트원 추가</button></div></div><div id="rosterList"></div></div>
+<div id="teamPanel" class="hidden"><p class="hint">파트와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. ✎ 이름 수정 · × 이름 삭제</p>
+<div class="member-add-panel"><h3>파트원 추가</h3>
+<div class="row"><label for="teamAssignment">파트</label><select id="teamAssignment" aria-label="추가할 파트"></select><label for="teamInstrument">악기</label><select id="teamInstrument" aria-label="추가할 사람의 악기"></select><input id="newTeamPerson" placeholder="추가할 이름" aria-label="추가할 이름"><button id="assignTeam">파트원 추가</button></div></div>
 <div id="teamList"></div>
-<div class="team-footer"><h3>추가 인원</h3>
-<div class="row"><label for="teamAssignment">팀</label><select id="teamAssignment" aria-label="추가할 팀"></select><label for="teamInstrument">악기</label><select id="teamInstrument" aria-label="추가할 사람의 악기"></select><input id="newTeamPerson" placeholder="추가할 이름" aria-label="추가할 이름"><button id="assignTeam">인원 추가</button></div>
-<p class="hint">이미 악기별 명단에 있는 사람은 이름만 입력하여 팀에 배정할 수 있습니다. 새로운 사람은 악기별 명단에도 함께 추가됩니다.</p>
-<h3 style="margin-top:18px">새 팀 추가</h3>
-<div class="row"><input id="newTeamName" placeholder="새 팀 이름" aria-label="새 팀 이름"><button id="addTeam">팀 추가</button></div></div>
 <div id="teamMessage" class="notice hidden" role="status"></div></div>
-<div id="rosterMessage" class="notice hidden" role="status"></div><p class="hint">변경한 명단은 현재 브라우저에 저장됩니다. 다른 기기와 자동 공유되지는 않습니다.</p></section>
-<section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div id="reasonList" class="manager-list"></div><p class="hint">미보고와 예배위원은 기본 항목이므로 이름 수정·삭제는 할 수 없으며 순서만 변경할 수 있습니다. 현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.</p><div id="reasonMessage" class="notice hidden" role="status"></div></section>
+<div id="rosterMessage" class="notice hidden" role="status"></div></section>
+<section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><p class="hint" id="reasonHint">현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.</p><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div id="reasonList" class="manager-list"></div><div id="reasonMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="output"><h2>⑤ 출결 결과</h2><p class="muted" id="outputMeetingName"></p>
 <div class="output-tabs" role="group" aria-label="출결 출력 양식"><button id="formatInstrument" class="active" type="button">기존 출결 양식</button><button id="formatTeam" class="secondary" type="button">최종 출결</button></div>
 
@@ -299,6 +350,8 @@ function empty(){return {status:'미보고',reason:'',detail:'',time:''}}
 function get(name){
  const record=state.people[name];
  if(activeMeeting==='tue-army'&&(name==='조슬기'||name==='최성빈')&&(!record||record.status==='미보고'))return {status:'출',reason:'',detail:'',time:''};
+ // 예배위원 사유는 화요일 전체모임 군악대 전용이다. 이전 저장 데이터에도 이 표시 제한을 적용한다.
+ if(activeMeeting!=='tue-army'&&record?.reason==='예배위원')return {...record,reason:''};
  return record||empty();
 }
 function cleanName(s){return String(s||'').replace(/[\s\u3000\u00a0]/g,'').trim()}
@@ -354,19 +407,19 @@ function titleDate(){
  return `${m}. ${d}.(${w}) ${MEETING_LABELS[activeMeeting].replace(/^\([^)]+\)\s*/,'')} 출결`;
 }
 function fillTemplate(source,tokens){return source.replace(/\{(날짜|참석|부분|불참|미보고|총원|실제불참|불참사유별)\}/g,(match,k)=>Object.prototype.hasOwnProperty.call(tokens,k)?String(tokens[k]):match)}
-// 파트미보고: 파트 전체가 미보고일 때만 인정한다.
-// 기본 미입력 상태만으로 전 파트가 미보고 처리되지 않도록,
-// 파트미보고 입력이 하나 이상 있거나 파트원 모두 미보고로 명시 입력한 경우에만 집계한다.
+// 파트미보고는 이름/파트미보고 한 줄로 해당 파트 전체를 지정한다.
+// 다른 파트원의 기존 출결 상태와 무관하게, 지정된 이름의 파트를 표시한다.
+// 같은 파트의 여러 사람을 입력해도 파트명과 인원은 한 번만 집계한다.
 function partMissingSummary(){
  const active=new Set(attendancePeople().map(person=>person.name));
+ const marked=new Set(Object.entries(state.people).filter(([name,p])=>
+  active.has(name)&&p&&p.reason==='파트미보고'&&p.status==='결'
+ ).map(([name])=>name));
  const teams=[];
  for(const [team,names] of TEAM_ROSTER){
   const members=[...new Set(names.split(/\s+/).filter(Boolean).filter(name=>active.has(name)))];
-  if(!members.length)continue;
-  const allUnreported=members.every(name=>{const p=get(name);return p.status==='미보고'||(p.status==='결'&&p.reason==='파트미보고')});
-  const explicitlyMarked=members.some(name=>{const p=state.people[name];return p?.status==='결'&&p.reason==='파트미보고'});
-  const allExplicitlyUnreported=members.every(name=>state.people[name]?.status==='미보고');
-  if(allUnreported&&(explicitlyMarked||allExplicitlyUnreported))teams.push({name:team,count:members.length});
+  if(!members.length||!members.some(name=>marked.has(name)))continue;
+  teams.push({name:team,count:members.length});
  }
  return {teams,total:teams.reduce((sum,t)=>sum+t.count,0)};
 }
@@ -446,7 +499,7 @@ function renderResults(){
  document.getElementById('outputMeetingName').textContent=MEETING_LABELS[activeMeeting]+' · '+state.date;
  const missingParts=partMissingSummary();
  document.getElementById('stats').innerHTML=[['전체',c.total],['참석',c.att],['부분 참석',c.partial],['미보고',c.unreported],['파트미보고',c.partUnreported],['불참',c.abs-c.unreported]].map(([l,n])=>l==='파트미보고'
-  ? `<div class="stat part-stat"><small>파트미보고</small><b>${n}명</b><span class="part-teams">${missingParts.teams.length?missingParts.teams.map(t=>esc(t.name.replace(/^\s*(?:>>|＞＞)\s*/,''))).join(', '):'없음'}</span></div>`
+  ? `<div class="stat part-stat"><small>파트미보고</small><b>${n?n+'명':'없음'}</b>${missingParts.teams.length?`<span class="part-teams">${missingParts.teams.map(t=>esc(t.name.replace(/^\s*(?:>>|＞＞)\s*/,''))).join(' ')}</span>`:''}</div>`
   : `<div class="stat"><small>${l}</small><b>${n}명</b></div>`).join('');
  const msg=document.getElementById('checkMessage');msg.className='notice '+(c.total===c.att+c.abs?'success':'');
  const extra=activeMeeting==='tue-army'?`\n주일 예배위원 제외 ${(state.excludedSunday||[]).filter(n=>PEOPLE.some(p=>p.name===n)).length}명 · 조슬기/최성빈 기본 참석 적용`:'';
@@ -483,6 +536,9 @@ function applyBulk(){
    timeRaw=detailRaw;detailRaw=reasonRaw;reasonRaw=statusRaw;statusRaw='결';
   }
   const status=statusRaw.replace(/\s/g,'');
+  if(activeMeeting!=='tue-army'&&reasonRaw==='예배위원'){
+   errors.push(`${i+1}행: 예배위원 사유는 (화) 전체모임 군악대에서만 사용할 수 있습니다.`);continue;
+  }
   if(!STATUSES.includes(status)){
    errors.push(`${i+1}행: ${name}의 상태 [${statusRaw}]를 확인하세요.`);continue;
   }
@@ -683,11 +739,19 @@ rosterInstrument.addEventListener('change',()=>{
   addInstrument();
  }else lastSelectedInstrument=rosterInstrument.value;
 });
-function addRoster(){const field=document.getElementById('rosterName'),name=field.value.trim();
- if(!name||/\s/.test(name)){alert('이름을 공백 없이 입력하세요.');field.focus();return}
- if(existsRoster(name)){alert('이미 등록된 이름입니다.');return}
- const index=ROSTER.findIndex(r=>r[0]===rosterInstrument.value);if(index<0)return;
- ROSTER[index][1]=[ROSTER[index][1],name].filter(Boolean).join(' ');field.value='';commitRoster(`${name} 님을 추가했습니다.`);
+function addRoster(){
+ const field=document.getElementById('rosterName'),name=field.value.trim();
+ if(!name||/\s|\//.test(name)){alert('이름은 공백과 / 없이 입력하세요.');field.focus();return}
+ const inst=rosterInstrument.value,part=document.getElementById('rosterPart').value;
+ const index=ROSTER.findIndex(r=>r[0]===inst),partIndex=TEAM_ROSTER.findIndex(r=>r[0]===part);
+ if(index<0||partIndex<0){alert('악기와 파트를 선택하세요. 파트가 없다면 + 파트 추가를 이용하세요.');return}
+ const existing=PEOPLE.find(p=>cleanName(p.name)===cleanName(name));
+ if(existing&&TEAM_ROSTER.some(([,names])=>names.split(/\s+/).includes(existing.name))){alert('이미 파트별 명단에 등록된 이름입니다.');return}
+ if(!existing)ROSTER[index][1]=[ROSTER[index][1],name].filter(Boolean).join(' ');
+ TEAM_ROSTER[partIndex][1]=[TEAM_ROSTER[partIndex][1],existing?.name||name].filter(Boolean).join(' ');
+ field.value='';
+ if(!existing)commitRoster(`${name} 님을 ${inst} 악기와 ${part} 파트에 추가했습니다.`,inst);
+ else commitTeams(`${name} 님을 ${part} 파트에 배정했습니다. (기존 악기는 ${existing.instrument})`);
 }
 document.getElementById('addRoster').addEventListener('click',addRoster);
 document.getElementById('rosterName').addEventListener('keydown',e=>{if(e.key==='Enter')addRoster()});
@@ -723,7 +787,10 @@ function reasonClick(i){
 }
 function renderReasons(){
  const root=document.getElementById('reasonList');root.replaceChildren();
+ const showSunday=activeMeeting==='tue-army';
+ document.getElementById('reasonHint').textContent=(showSunday?'미보고와 예배위원은':'미보고는')+' 기본 항목이므로 이름 수정·삭제는 할 수 없으며 순서만 변경할 수 있습니다. 현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.';
  REASONS.forEach((reason,i)=>{
+  if(reason==='예배위원'&&!showSunday)return;
   const row=document.createElement('div');row.className='manager-item reason-item';row.dataset.reasonIndex=String(i);
   row.draggable=!window.matchMedia('(pointer:coarse)').matches;
   row.title=`${reason}: 선택 후 다른 사유 클릭 또는 드래그해서 이동`;
@@ -764,7 +831,11 @@ function renderReasons(){
    };
    name.addEventListener('pointerup',e=>end(e,false));name.addEventListener('pointercancel',e=>end(e,true));
    name.addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){
-    e.preventDefault();const to=Math.min(REASONS.length-1,Math.max(0,i+(e.key==='ArrowUp'?-1:1)));moveReason(i,to);
+    e.preventDefault();
+    const visibleIndices=REASONS.map((r,j)=>r==='예배위원'&&!showSunday?-1:j).filter(j=>j>=0);
+    const fromPosition=visibleIndices.indexOf(i);
+    const to=visibleIndices[Math.min(visibleIndices.length-1,Math.max(0,fromPosition+(e.key==='ArrowUp'?-1:1)))];
+    moveReason(i,to);
     root.querySelector(`[data-reason-index="${to}"] .manager-title`)?.focus();
    }else if(e.key==='Enter'||e.key===' '){e.preventDefault();reasonClick(i)}});
   root.appendChild(row);
@@ -806,38 +877,72 @@ function moveTeamMember(fromTeam,fromIndex,toTeam,toIndex=null){
  let pos=toIndex===null?to.length:Math.max(0,Math.min(toIndex,to.length));
  if(fromTeam===toTeam&&fromIndex<pos)pos--;
  to.splice(pos,0,name);TEAM_ROSTER[fromTeam][1]=from.join(' ');TEAM_ROSTER[toTeam][1]=to.join(' ');
- commitTeams(`${name} 님을 ${TEAM_ROSTER[toTeam][0]} 팀으로 이동하거나 순서를 변경했습니다.`);
+ commitTeams(`${name} 님을 ${TEAM_ROSTER[toTeam][0]} 파트로 이동하거나 순서를 변경했습니다.`);
 }
 function teamNameClick(ti,ni){
  if(selectedTeamRow!==null){selectedTeamRow=null;renderTeams();return}
  if(selectedTeamMember){const from=selectedTeamMember;selectedTeamMember=null;moveTeamMember(from.ti,from.ni,ti,ni)}
- else{selectedTeamMember={ti,ni};renderTeams();teamNotice('이동할 다른 이름이나 팀 제목을 선택하세요. PC에서는 바로 드래그할 수도 있습니다.')}
+ else{selectedTeamMember={ti,ni};renderTeams();teamNotice('이동할 다른 이름이나 파트 제목을 선택하세요. PC에서는 바로 드래그할 수도 있습니다.')}
 }
 function teamHeadingClick(ti){
  if(selectedTeamMember){const from=selectedTeamMember;selectedTeamMember=null;moveTeamMember(from.ti,from.ni,ti);return}
  if(selectedTeamRow!==null){const from=selectedTeamRow;selectedTeamRow=null;moveTeamRow(from,ti);return}
- selectedTeamRow=ti;renderTeams();teamNotice('순서를 바꿀 다른 팀 제목을 선택하세요.');
+ selectedTeamRow=ti;renderTeams();teamNotice('순서를 바꿀 다른 파트 제목을 선택하세요.');
 }
 function moveTeamRow(from,to){
  if(from===to){selectedTeamRow=null;renderTeams();return}
  if(from<0||to<0||from>=TEAM_ROSTER.length||to>=TEAM_ROSTER.length)return;
- const [item]=TEAM_ROSTER.splice(from,1);TEAM_ROSTER.splice(to,0,item);commitTeams(`${item[0]} 팀 순서를 변경했습니다.`);
+ const [item]=TEAM_ROSTER.splice(from,1);TEAM_ROSTER.splice(to,0,item);commitTeams(`${item[0]} 파트 순서를 변경했습니다.`);
+}
+const ADD_PART_OPTION='__new_part__';
+const lastPartSelections={teamAssignment:'',rosterPart:''};
+function refreshPartSelector(id,preferred=''){
+ const selector=document.getElementById(id);
+ const old=preferred||(selector.value!==ADD_PART_OPTION?selector.value:lastPartSelections[id]);
+ selector.replaceChildren();
+ for(const [part] of TEAM_ROSTER){const o=document.createElement('option');o.value=part;o.textContent=part;selector.appendChild(o)}
+ const addOption=document.createElement('option');addOption.value=ADD_PART_OPTION;addOption.textContent='＋ 파트 추가';selector.appendChild(addOption);
+ if(TEAM_ROSTER.some(([part])=>part===old))selector.value=old;
+ else selector.value=TEAM_ROSTER.length?TEAM_ROSTER[0][0]:ADD_PART_OPTION;
+ lastPartSelections[id]=selector.value;
+}
+function addPartFromSelect(id){
+ const selector=document.getElementById(id);
+ const previous=lastPartSelections[id];
+ if(TEAM_ROSTER.some(([part])=>part===previous))selector.value=previous;
+ const raw=prompt('추가할 파트 이름을 입력하세요.');
+ if(raw===null)return;
+ const name=raw.trim();
+ if(!name||/[\r\n/]/.test(name)||TEAM_ROSTER.some(([part])=>part===name)){
+  alert('파트 이름을 확인하세요. 이미 있는 이름이나 /, 줄바꿈은 사용할 수 없습니다.');return;
+ }
+ TEAM_ROSTER.push([name,'']);
+ commitTeams(`${name} 파트를 추가했습니다.`);
+ refreshPartSelector('teamAssignment',name);
+ refreshPartSelector('rosterPart',name);
+}
+for(const id of ['teamAssignment','rosterPart']){
+ document.getElementById(id).addEventListener('change',()=>{
+  const selector=document.getElementById(id);
+  if(selector.value===ADD_PART_OPTION)addPartFromSelect(id);
+  else lastPartSelections[id]=selector.value;
+ });
 }
 function renderTeamAssignment(){
- const teamSelect=document.getElementById('teamAssignment'),instSelect=document.getElementById('teamInstrument');
- const old=teamSelect.value,oldInst=instSelect.value;teamSelect.replaceChildren();instSelect.replaceChildren();
- for(const [team] of TEAM_ROSTER){const o=document.createElement('option');o.value=team;o.textContent=team;teamSelect.appendChild(o)}
- if(TEAM_ROSTER.some(([name])=>name===old))teamSelect.value=old;
+ const instSelect=document.getElementById('teamInstrument'),oldInst=instSelect.value;
+ refreshPartSelector('teamAssignment');refreshPartSelector('rosterPart');
+ instSelect.replaceChildren();
  for(const [inst] of ROSTER){const o=document.createElement('option');o.value=inst;o.textContent=inst;instSelect.appendChild(o)}
  if(ROSTER.some(([inst])=>inst===oldInst))instSelect.value=oldInst;
  document.getElementById('assignTeam').disabled=!TEAM_ROSTER.length||!ROSTER.length;
+ document.getElementById('addRoster').disabled=!TEAM_ROSTER.length||!ROSTER.length;
 }
 function renderTeams(){
  const root=document.getElementById('teamList');root.replaceChildren();
  TEAM_ROSTER.forEach(([title,names],ti)=>{
   const row=document.createElement('div');row.className='roster-row team-row';row.dataset.teamIndex=String(ti);
   const side=document.createElement('div');side.className='roster-inst';
-  const label=document.createElement('span');label.className='inst-title';label.textContent=title;label.tabIndex=0;label.title='팀 순서 변경: PC 드래그 또는 클릭 후 이동할 팀 클릭';label.draggable=!window.matchMedia('(pointer:coarse)').matches;
+  const label=document.createElement('span');label.className='inst-title';label.textContent=title;label.tabIndex=0;label.title='파트 순서 변경: PC 드래그 또는 클릭 후 이동할 파트 클릭';label.draggable=!window.matchMedia('(pointer:coarse)').matches;
   if(selectedTeamRow===ti)label.classList.add('instrument-selected');
   label.addEventListener('click',()=>{if(suppressTeamClick){suppressTeamClick=false;return}teamHeadingClick(ti)});label.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();teamHeadingClick(ti)}else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const to=Math.min(TEAM_ROSTER.length-1,Math.max(0,ti+(e.key==='ArrowUp'?-1:1)));moveTeamRow(ti,to);document.querySelector(`#teamList [data-team-index=\"${to}\"] .inst-title`)?.focus()}});
   label.addEventListener('dragstart',e=>{draggingTeamRow=ti;e.dataTransfer.setData('text/plain',title);e.dataTransfer.effectAllowed='move'});
@@ -866,18 +971,18 @@ function renderTeams(){
   };
   label.addEventListener('pointerup',e=>endTouch(e,false));label.addEventListener('pointercancel',e=>endTouch(e,true));
   const actions=document.createElement('div');actions.className='team-name-actions';
-  const edit=document.createElement('button');edit.type='button';edit.className='mini-action';edit.textContent='✎';edit.title=title+' 팀 이름 수정';edit.setAttribute('aria-label',title+' 팀 이름 수정');edit.addEventListener('click',()=>{
-   const value=prompt('새 팀 이름',title);if(value===null)return;const next=value.trim();if(!next||/[/\r\n]/.test(next)||TEAM_ROSTER.some(([n],i)=>i!==ti&&n===next)){alert('사용할 수 없는 팀 이름입니다.');return}TEAM_ROSTER[ti][0]=next;commitTeams('팀 이름을 변경했습니다.');
+  const edit=document.createElement('button');edit.type='button';edit.className='mini-action';edit.textContent='✎';edit.title=title+' 파트 이름 수정';edit.setAttribute('aria-label',title+' 파트 이름 수정');edit.addEventListener('click',()=>{
+   const value=prompt('새 파트 이름',title);if(value===null)return;const next=value.trim();if(!next||/[/\r\n]/.test(next)||TEAM_ROSTER.some(([n],i)=>i!==ti&&n===next)){alert('사용할 수 없는 파트 이름입니다.');return}TEAM_ROSTER[ti][0]=next;commitTeams('파트 이름을 변경했습니다.');
   });
-  const remove=document.createElement('button');remove.type='button';remove.className='mini-action remove';remove.textContent='×';remove.title=title+' 팀 삭제';remove.setAttribute('aria-label',title+' 팀 삭제');remove.addEventListener('click',()=>{
+  const remove=document.createElement('button');remove.type='button';remove.className='mini-action remove';remove.textContent='×';remove.title=title+' 파트 삭제';remove.setAttribute('aria-label',title+' 파트 삭제');remove.addEventListener('click',()=>{
    const size=teamMembers(ti).length;
-   if(!confirm(`${title} 팀을 삭제할까요?${size?`\n소속 ${size}명은 악기별 명단에 그대로 남으며 최종 출결에도 포함됩니다. 다른 팀으로 다시 배정할 수 있습니다.`:''}`))return;
-   TEAM_ROSTER.splice(ti,1);commitTeams(`${title} 팀을 삭제했습니다. ${size?`소속 ${size}명은 악기별 명단에 남아 있습니다.`:''}`);
+   if(!confirm(`${title} 파트를 삭제할까요?${size?`\n소속 ${size}명은 악기별 명단에 그대로 남으며 최종 출결에도 포함됩니다. 다른 파트로 다시 배정할 수 있습니다.`:''}`))return;
+   TEAM_ROSTER.splice(ti,1);commitTeams(`${title} 파트를 삭제했습니다. ${size?`소속 ${size}명은 악기별 명단에 남아 있습니다.`:''}`);
   });
   actions.append(edit,remove);side.append(label,actions);row.appendChild(side);
   const members=document.createElement('div');members.className='roster-members';
   teamMembers(ti).forEach((name,ni)=>{
-   const chip=document.createElement('div');chip.className='roster-member';chip.draggable=true;chip.title=`${name}: 드래그하거나 선택 후 다른 팀/이름 클릭`;
+   const chip=document.createElement('div');chip.className='roster-member';chip.draggable=true;chip.title=`${name}: 드래그하거나 선택 후 다른 파트/이름 클릭`;
    if(selectedTeamMember?.ti===ti&&selectedTeamMember?.ni===ni)chip.classList.add('selected');
    const span=document.createElement('span');span.textContent=name;chip.appendChild(span);
    const foundRi=ROSTER.findIndex(row=>row[1].split(/\s+/).includes(name));
@@ -888,7 +993,7 @@ function renderTeams(){
    }}
    span.addEventListener('click',()=>teamNameClick(ti,ni));
    let timer=null,pointer=null,pressed=false;
-   span.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;pointer={x:e.clientX,y:e.clientY};timer=setTimeout(()=>{timer=null;pressed=true;selectedTeamMember={ti,ni};renderTeams();teamNotice('이동할 팀이나 다른 이름을 선택하세요.')},480)});
+   span.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;pointer={x:e.clientX,y:e.clientY};timer=setTimeout(()=>{timer=null;pressed=true;selectedTeamMember={ti,ni};renderTeams();teamNotice('이동할 파트나 다른 이름을 선택하세요.')},480)});
    span.addEventListener('pointermove',e=>{if(timer&&pointer&&Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y)>12){clearTimeout(timer);timer=null}});
    for(const type of ['pointerup','pointercancel','pointerleave'])span.addEventListener(type,()=>{if(timer){clearTimeout(timer);timer=null}});
    chip.addEventListener('dragstart',e=>{if(e.target.closest('button')){e.preventDefault();return}draggingTeamMember={ti,ni};e.dataTransfer.setData('text/plain',name);e.dataTransfer.effectAllowed='move'});
@@ -912,9 +1017,6 @@ function switchRosterTab(tab){rosterTab=tab;document.getElementById('instrumentP
 }
 document.getElementById('instrumentTab').addEventListener('click',()=>switchRosterTab('instrument'));
 document.getElementById('teamTab').addEventListener('click',()=>switchRosterTab('team'));
-document.getElementById('addTeam').addEventListener('click',()=>{const input=document.getElementById('newTeamName'),name=input.value.trim();
- if(!name||/[\r\n/]/.test(name)||TEAM_ROSTER.some(([team])=>team===name)){alert('팀 이름을 확인하세요.');return}
- TEAM_ROSTER.push([name,'']);input.value='';commitTeams(`${name} 팀을 추가했습니다.`)});
 document.getElementById('assignTeam').addEventListener('click',()=>{
  const team=document.getElementById('teamAssignment').value,inst=document.getElementById('teamInstrument').value;
  const field=document.getElementById('newTeamPerson'),name=field.value.trim();
