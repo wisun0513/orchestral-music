@@ -446,7 +446,7 @@ function renderResults(){
  document.getElementById('outputMeetingName').textContent=MEETING_LABELS[activeMeeting]+' · '+state.date;
  const missingParts=partMissingSummary();
  document.getElementById('stats').innerHTML=[['전체',c.total],['참석',c.att],['부분 참석',c.partial],['미보고',c.unreported],['파트미보고',c.partUnreported],['불참',c.abs-c.unreported]].map(([l,n])=>l==='파트미보고'
-  ? `<div class="stat part-stat"><small>파트미보고</small><b>${n}명</b><span class="part-teams">&gt;&gt; ${missingParts.teams.length?missingParts.teams.map(t=>esc(t.name)).join(', '):'없음'}</span></div>`
+  ? `<div class="stat part-stat"><small>파트미보고</small><b>${n}명</b><span class="part-teams">${missingParts.teams.length?missingParts.teams.map(t=>esc(t.name.replace(/^\s*(?:>>|＞＞)\s*/,''))).join(', '):'없음'}</span></div>`
   : `<div class="stat"><small>${l}</small><b>${n}명</b></div>`).join('');
  const msg=document.getElementById('checkMessage');msg.className='notice '+(c.total===c.att+c.abs?'success':'');
  const extra=activeMeeting==='tue-army'?`\n주일 예배위원 제외 ${(state.excludedSunday||[]).filter(n=>PEOPLE.some(p=>p.name===n)).length}명 · 조슬기/최성빈 기본 참석 적용`:'';
