@@ -153,7 +153,7 @@
 <div class="row" style="margin-top:10px"><button id="applySunday">주일 예배위원 명단 적용</button><span id="sundayCount" class="pill">제외 0명</span></div>
 <div id="sundayMessage" class="notice hidden" role="status"></div>
 <p class="hint">명단을 비우고 적용하면 제외 설정도 해제됩니다. 제외 명단에 포함된 사람은 출결 대상 인원수에 포함되지 않고, 최종 출결에는 이름/결/예배위원으로 표시됩니다. 조슬기, 최성빈은 제외됩니다.</p></section>
-<section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><p class="hint">이름 뒤에 붙는 영문자는 대문자·소문자 모두 인식합니다. 예: 최지웅a = 최지웅A (A와 B는 별도 인원)</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
+<section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><p class="hint">이름 뒤에 붙는 영문자는 대문자·소문자 동일하게 인식합니다.</p><p class="hint">예 : 김계시a = 김계시A</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
 <div class="roster-tabs" role="group" aria-label="명단 분류"><button id="instrumentTab" type="button" class="active">악기별 명단</button><button id="teamTab" type="button" class="secondary">파트별 명단</button></div>
@@ -165,7 +165,11 @@
 <div id="teamList"></div>
 <div id="teamMessage" class="notice hidden" role="status"></div></div>
 <div id="rosterMessage" class="notice hidden" role="status"></div></section>
-<section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><p class="hint" id="reasonHint">현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.</p><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div class="row" style="margin:0 0 10px"><button type="button" id="resetReasonOrder" class="outline">기존 순서 적용</button></div><div id="reasonList" class="manager-list"></div><div id="reasonMessage" class="notice hidden" role="status"></div></section>
+<section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><div class="hint" id="reasonHint" style="white-space:pre-line">미보고와 파트미보고는 순서 변경이 불가합니다.
+
+현재 ② 출결 붙여넣기에 기재되어있는 아래 사유는 수정 적용이 불가합니다. 수정을 원하시면 ② 출결 붙여넣기에서 해당 사유 삭제 후 수정해주세요.
+
+② 출결 붙여넣기에 기재한 사유가 아래 목록에 없을 경우, 해당 사유는 '미보고' 바로 위에 표시됩니다.</div><div class="row" style="margin:12px 0"><label for="newReason">새 불참 사유</label><input id="newReason" type="text" placeholder="추가할 사유 입력" style="flex:1;min-width:150px"><button id="addReason">사유 추가</button></div><div class="row" style="margin:0 0 10px"><button type="button" id="resetReasonOrder" class="outline">기존 순서 적용</button></div><div id="reasonList" class="manager-list"></div><div id="reasonMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="output"><h2>⑤ 출결 결과</h2>
 <p class="muted" id="outputMeetingName"></p>
 <div id="stats" class="stats"></div>
@@ -905,6 +909,7 @@ let draggingReason=null;
 function moveReason(from,to){
  if(!Number.isInteger(from)||!Number.isInteger(to)||from<0||to<0||from>=REASONS.length||to>=REASONS.length)return;
  if(from===to){selectedReason=null;renderReasons();return}
+ if(['미보고','파트미보고'].includes(REASONS[from])||['미보고','파트미보고'].includes(REASONS[to])){selectedReason=null;draggingReason=null;renderReasons();messageTo('reasonMessage','미보고와 파트미보고는 순서를 변경할 수 없습니다.',false);return}
  const [moved]=REASONS.splice(from,1);
  REASONS.splice(to,0,moved);
  selectedReason=null;draggingReason=null;
@@ -912,6 +917,7 @@ function moveReason(from,to){
  messageTo('reasonMessage',`${moved} 사유의 출력 순서를 변경했습니다.`);
 }
 function reasonClick(i){
+ if(['미보고','파트미보고'].includes(REASONS[i])){selectedReason=null;renderReasons();messageTo('reasonMessage','미보고와 파트미보고는 순서를 변경할 수 없습니다.',false);return}
  if(selectedReason===null){selectedReason=i;renderReasons();messageTo('reasonMessage','이동할 불참 사유를 눌러 주세요. 같은 사유를 누르면 선택이 해제됩니다.');return}
  moveReason(selectedReason,i);
 }
@@ -929,7 +935,7 @@ function resetReasonOrder(){
 function renderReasons(){
  const root=document.getElementById('reasonList');root.replaceChildren();
  const showSunday=activeMeeting==='tue-army';
- document.getElementById('reasonHint').textContent=(showSunday?'미보고와 예배위원은':'미보고는')+' 기본 항목이므로 이름 수정·삭제는 할 수 없으며 순서만 변경할 수 있습니다. 현재 출결에서 사용 중인 사유는 삭제할 수 없습니다.';
+ document.getElementById('reasonHint').textContent='미보고와 파트미보고는 순서 변경이 불가합니다.\n\n현재 ② 출결 붙여넣기에 기재되어있는 아래 사유는 수정 적용이 불가합니다. 수정을 원하시면 ② 출결 붙여넣기에서 해당 사유 삭제 후 수정해주세요.\n\n② 출결 붙여넣기에 기재한 사유가 아래 목록에 없을 경우, 해당 사유는 \'미보고\' 바로 위에 표시됩니다.';
  REASONS.forEach((reason,i)=>{
   if(reason==='예배위원'&&!showSunday)return;
   const row=document.createElement('div');row.className='manager-item reason-item';row.dataset.reasonIndex=String(i);
@@ -937,8 +943,8 @@ function renderReasons(){
   row.title=`${reason}: 선택 후 다른 사유 클릭 또는 드래그해서 이동`;
   if(selectedReason===i)row.classList.add('selected');
    const name=document.createElement('span');name.className='manager-title';name.textContent=reason;name.tabIndex=0;row.appendChild(name);
-   if(reason==='미보고'||reason==='예배위원'){const fixed=document.createElement('span');fixed.className='tag';fixed.textContent='기본 항목';row.appendChild(fixed)}
-   if(reason!=='미보고'&&reason!=='예배위원'){
+   if(reason==='미보고'||reason==='파트미보고'||reason==='예배위원'){const fixed=document.createElement('span');fixed.className='tag';fixed.textContent=reason==='예배위원'?'기본 항목':'순서 변경불가';row.appendChild(fixed)}
+   if(!['미보고','파트미보고','예배위원'].includes(reason)){
     row.appendChild(managerButton('✎',`${reason} 사유 수정`,()=>{selectedReason=null;editReason(i)}));
     row.appendChild(managerButton('×',`${reason} 사유 삭제`,()=>{selectedReason=null;deleteReason(i)},false,'outline'));
    }
@@ -992,13 +998,13 @@ function validReason(value,previous=''){
 function addReason(){const input=document.getElementById('newReason'),name=validReason(input.value);if(name===null){input.focus();return}
  selectedReason=null;REASONS.push(name);input.value='';saveReasons();renderReasons();renderResults();messageTo('reasonMessage',`${name} 사유를 추가했습니다.`);
 }
-function editReason(i){const prev=REASONS[i],raw=prompt('수정할 불참 사유를 입력하세요.',prev);if(raw===null)return;
+function editReason(i){const prev=REASONS[i];if(['미보고','파트미보고','예배위원'].includes(prev))return;const raw=prompt('수정할 불참 사유를 입력하세요.',prev);if(raw===null)return;
  const next=validReason(raw,prev);if(next===null||next===prev)return;
  selectedReason=null;REASONS[i]=next;
  for(const p of Object.values(state.people))if(p&&p.reason===prev)p.reason=next;
  saveReasons();save();renderReasons();renderResults();messageTo('reasonMessage',`${prev} → ${next} 사유 이름을 변경했습니다. 기존 출결 데이터에도 반영되었습니다.`);
 }
-function deleteReason(i){const reason=REASONS[i];if(reason==='미보고'||reason==='예배위원')return;
+function deleteReason(i){const reason=REASONS[i];if(['미보고','파트미보고','예배위원'].includes(reason))return;
  if(reasonIsUsed(reason)){messageTo('reasonMessage',`${reason} 사유가 현재 출결 데이터에 사용 중이므로 삭제할 수 없습니다. 다른 사유로 변경한 뒤 삭제하세요.`,false);return}
  if(!confirm(`${reason} 불참 사유를 삭제할까요?`))return;
  selectedReason=null;REASONS.splice(i,1);saveReasons();renderReasons();renderResults();messageTo('reasonMessage',`${reason} 사유를 삭제했습니다.`);
