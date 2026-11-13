@@ -244,14 +244,14 @@ function loadRoster(){try{
 
 // 2026-11-14: 정신은 현악파트 모임에서만 Cb., 나머지 해당 모임에서는 Sax.
 // 기존 브라우저 저장 명단도 교정하되 다른 사람의 배치는 유지한다.
-const ROSTER_MIGRATION_KEY=MULTI_PREFIX+'-jeongsin-meeting-instruments-v3';
+const ROSTER_MIGRATION_KEY=MULTI_PREFIX+'-jeongsin-meeting-instruments-v4';
 function normalizeInstrumentRoster(rows,meeting){
  const source=cloneRows(rows);
  for(const row of source){
   row[1]=row[1].split(/\s+/).filter(n=>n&&n!=='정신').join(' ');
  }
  // 현악파트 모임 외에는 Cb. 자체를 없앤다.
- const cleaned=source.filter(row=>meeting==='sat-strings'||row[0]!=='Cb.');
+ const cleaned=source.filter(row=>meeting==='sat-strings'?row[0]!=='Sax.':row[0]!=='Cb.');
  const inst=meeting==='sat-strings'?'Cb.':'Sax.';
  let row=cleaned.find(r=>r[0]===inst);
  if(!row){row=[inst,''];cleaned.push(row)}
@@ -339,6 +339,8 @@ function linkedTuesdayReconcile(previousRows=null){
     return a.i-b.i;
    }).map(x=>x.n).join(' ');
   }
+  // 현악파트 모임에는 Sax. 악기를 만들거나 유지하지 않는다.
+  if(id==='sat-strings')target.splice(0,target.length,...target.filter(row=>row[0]!=='Sax.'));
   writeMeetingRoster(id,target);
   if(deleted.length){
    try{
@@ -393,7 +395,7 @@ function ensureSundayReason(){
 }
 function ensureInstrumentLines(text){
  // Keep user-chosen order for all existing instruments. Append only genuinely missing instruments.
- const lines=String(text).replace(/\r\n/g,'\n').split('\n');
+ const lines=String(text).replace(/\r\n/g,'\n').split('\n').filter(line=>!(activeMeeting==='sat-strings'&&line.trim()==='Sax.'));
  const known=new Set(ROSTER.map(r=>r[0]));
  const found=new Set(lines.map(x=>x.trim()).filter(x=>known.has(x)));
  const missing=ROSTER.map(r=>r[0]).filter(x=>!found.has(x));
@@ -437,7 +439,7 @@ function loadTemplate(){
    if(typeof previous==='string'&&previous.includes('{불참사유별}'))templateText=previous;
   }
  }catch(e){console.warn('양식 불러오기 실패',e)}
- templateText=normalizeAbsenceSpacing(ensureInstrumentLines(templateText.split('\n').filter(line=>(activeMeeting==='sat-strings'||line.trim()!=='Cb.') && (activeMeeting!=='sat-strings'||line.trim()!=='Sax.'||ROSTER.some(r=>r[0]==='Sax.')) && (line.trim()!=='pa.'||ROSTER.some(r=>r[0]==='pa.'))).join('\n')));
+ templateText=normalizeAbsenceSpacing(ensureInstrumentLines(templateText.split('\n').filter(line=>(activeMeeting==='sat-strings'||line.trim()!=='Cb.') && (activeMeeting!=='sat-strings'||line.trim()!=='Sax.') && (line.trim()!=='pa.'||ROSTER.some(r=>r[0]==='pa.'))).join('\n')));
 }
 function saveTemplateStorage(){try{
  localStorage.setItem(MULTI_PREFIX+'-template-'+activeMeeting,JSON.stringify(templateText));
