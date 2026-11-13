@@ -125,7 +125,18 @@
 .result-title{justify-content:space-between;margin-bottom:5px}.result-title h2{margin:0;font-size:16px}
 .result-title button{padding:8px 10px;font-size:12px}
 .dual-results .hint{margin-bottom:12px}
-@media(max-width:850px){.dual-results{grid-template-columns:1fr}.dual-results .result{min-height:300px;max-height:none}}
+/* Desktop: keep both result panels side by side; compact screens: show one at a time. */
+.mobile-output-tabs{display:none}
+@media(max-width:850px){
+ .mobile-output-tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:16px 0 0}
+ .mobile-output-tabs button{min-width:0;width:100%;border:1px solid #b8ccc0;background:#eaf1ed;color:#174d3d;padding:12px 6px;font-size:14px}
+ .mobile-output-tabs button.active{background:#174d3d;color:#fff;border-color:#174d3d}
+ .dual-results{grid-template-columns:1fr;margin-top:12px}
+ .dual-results[data-mobile-view="traditional"] [data-output-panel="final"],
+ .dual-results[data-mobile-view="final"] [data-output-panel="traditional"]{display:none}
+ .dual-results .result{min-height:240px;max-height:min(60vh,540px);overflow:auto;-webkit-overflow-scrolling:touch}
+}
+
 </style>
 </head>
 <body><main>
@@ -142,7 +153,7 @@
 <div class="row" style="margin-top:10px"><button id="applySunday">주일 예배위원 명단 적용</button><span id="sundayCount" class="pill">제외 0명</span></div>
 <div id="sundayMessage" class="notice hidden" role="status"></div>
 <p class="hint">명단을 비우고 적용하면 제외 설정도 해제됩니다. 제외 명단에 포함된 사람은 출결 대상 인원수에 포함되지 않고, 최종 출결에는 이름/결/예배위원으로 표시됩니다. 조슬기, 최성빈은 제외됩니다.</p></section>
-<section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
+<section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><p class="hint">이름 뒤에 붙는 영문자는 대문자·소문자 모두 인식합니다. 예: 최지웅a = 최지웅A (A와 B는 별도 인원)</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
 <div class="roster-tabs" role="group" aria-label="명단 분류"><button id="instrumentTab" type="button" class="active">악기별 명단</button><button id="teamTab" type="button" class="secondary">파트별 명단</button></div>
@@ -161,14 +172,18 @@
 <div id="checkMessage" class="notice" role="status"></div>
 <!-- Original controls retained for backwards-compatible calculation handlers, visually hidden. -->
 <div class="hidden" aria-hidden="true"><button id="formatInstrument" type="button"></button><button id="formatTeam" type="button"></button><button id="copyAll" type="button"></button><button id="copyAtt" type="button"></button><button id="copyAbsent" type="button"></button><div id="resultHeading"></div><div id="result"></div></div>
-<div class="dual-results">
- <div class="previewArea">
+<div id="mobileOutputTabs" class="mobile-output-tabs" role="group" aria-label="모바일 최종출결 양식 선택">
+ <button id="showTraditionalResult" type="button" class="active" aria-pressed="true" aria-controls="traditionalResult">최종출결 1</button>
+ <button id="showFinalResult" type="button" aria-pressed="false" aria-controls="finalResult">최종출결 2</button>
+</div>
+<div class="dual-results" id="dualResults" data-mobile-view="traditional">
+ <div class="previewArea" data-output-panel="traditional">
   <div class="row result-title"><h2>최종출결 1</h2><button id="copyTraditionalAll" type="button">전체 복사</button></div>
   <p class="hint">기존 출결 양식 · 악기별 참석 및 불참</p>
   <div id="traditionalResult" class="result" aria-label="기존 출결 양식 결과"></div>
   <div class="row" style="margin-top:10px"><button class="secondary" id="copyTraditionalAtt" type="button">참석 부분만 복사</button><button class="secondary" id="copyTraditionalAbs" type="button">불참 부분만 복사</button></div>
  </div>
- <div class="previewArea">
+ <div class="previewArea" data-output-panel="final">
   <div class="row result-title"><h2>최종출결 2</h2><button id="copyFinalAll" type="button">전체 복사</button></div>
   <p class="hint">개인별 최종 출결 · 이름/상태/사유</p>
   <div id="finalResult" class="result" aria-label="개인별 최종 출결 결과"></div>
@@ -541,9 +556,11 @@ function displayedResult(){return outputFormat==='team'?computeTeam():compute()}
 function normalizedInputName(raw){
  return cleanName(String(raw||'').replace(/^[\s•●◆▶▷◦■□*+\-–—|>\[\]()0-9.、:：]+/g,'').replace(/[\s\[\]():：.,，;|]+$/g,'').replace(/\([^)]*(?:Fl|Cla|Sax|Vn|Va|Vc|Cb|Hn|Tp|Tb|Eup|Tuba|Per|pa)[^)]*\)$/i,''));
 }
+// Compare Latin suffixes without case sensitivity, retaining the roster's original spelling.
+function bulkNameKey(name){return cleanName(name).replace(/[a-z]/g,ch=>ch.toUpperCase())}
 function applyBulk(){
  const input=document.getElementById('bulkInput').value,lines=input.split(/\r?\n/);
- const known=new Map(PEOPLE.map(p=>[cleanName(p.name),p.name]));
+ const known=new Map(PEOPLE.map(p=>[bulkNameKey(p.name),p.name]));
  const updates=new Map(),errors=[],duplicates=[],ignored=[];
  let valid=0;
  for(let i=0;i<lines.length;i++){
@@ -553,7 +570,7 @@ function applyBulk(){
   // 이름/상태 외에도 쉼표나 탭으로 분리된 출결 기록을 허용한다.
   if(fields.length<2){fields=cleanLine.split(/[\t,，:：]+/).map(x=>x.trim()).filter(Boolean)}
   if(fields.length<2){const m=cleanLine.match(/^(.+?)\s+(출|결|부분|미보고|파트미보고)(?:\s+(.+))?$/);if(m)fields=[m[1],m[2],m[3]||'']}
-  const raw=fields[0]||'',name=known.get(normalizedInputName(raw));
+  const raw=fields[0]||'',name=known.get(bulkNameKey(normalizedInputName(raw)));
   if(!name){ignored.push(raw||line);continue}
   // 이름만 있거나 이름/만 입력하면 아직 기록하지 않은 상태를 유지한다.
   if(fields.length<2||!fields[1])continue;
@@ -607,6 +624,19 @@ refreshBulkExample();
 document.getElementById('reset').addEventListener('click',()=>{if(!confirm(`${PEOPLE.length}명 출결 상태를 모두 미보고로 초기화할까요?`))return;state.people={};save();renderResults();document.getElementById('bulkMessage').classList.add('hidden')});
 document.getElementById('copyAll').addEventListener('click',e=>copy(displayedResult().full,e.currentTarget));document.getElementById('copyAtt').addEventListener('click',e=>copy(displayedResult().attText,e.currentTarget));document.getElementById('copyAbsent').addEventListener('click',e=>copy(displayedResult().absText,e.currentTarget));
 for(const [format,id] of [['instrument','formatInstrument'],['team','formatTeam']])document.getElementById(id).addEventListener('click',()=>{outputFormat=format;renderResults()});
+// Narrow screens: switch between existing result panels without changing content or copy actions.
+function selectMobileOutput(view){
+ const selected=view==='final'?'final':'traditional';
+ document.getElementById('dualResults').dataset.mobileView=selected;
+ for(const [id,panel] of [['showTraditionalResult','traditional'],['showFinalResult','final']]){
+  const active=selected===panel;
+  const button=document.getElementById(id);
+  button.classList.toggle('active',active);
+  button.setAttribute('aria-pressed',String(active));
+ }
+}
+document.getElementById('showTraditionalResult').addEventListener('click',()=>selectMobileOutput('traditional'));
+document.getElementById('showFinalResult').addEventListener('click',()=>selectMobileOutput('final'));
 // Always-visible results: independent copy buttons for each original output format.
 for(const [id,format,part] of [
  ['copyTraditionalAll','instrument','full'],['copyTraditionalAtt','instrument','attText'],['copyTraditionalAbs','instrument','absText'],
