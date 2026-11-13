@@ -199,7 +199,7 @@
 <script>
 'use strict';
 const MEETING_LABELS={"tue-all":"(화) 관현악 전체모임","tue-army":"(화) 전체모임 군악대","sat-army":"(토) 군악대 모임","sat-strings":"(토) 현악파트 모임","sat-committee":"(토) 관현악 예배위원 모임"};
-const MEETING_DEFAULTS={"tue-all":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이병기 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"tue-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-strings":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Sax.","정신"]],"sat-committee":[["Vn.","이채원 강은실 김석현 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Fl.","장하람 강지나 김지선 조슬기"],["Cla.","강채은 곽현지 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 이지인 최성빈 황은선"],["Hn.","김예은 장윤주"],["Tp.","박나현 강유영 양가연 윤소현 최지웅A"],["Tb.","채창무 김혜주 이병기 이성제"],["Eup.","박혜람 주성현"],["Tuba.","안시온"],["Per.","최상범 김소연 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"]]};
+const MEETING_DEFAULTS={"tue-all":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이병기 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"tue-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-army":[["Fl.","장하람 강지나 김소희 김지선 이채련 이하빈 조슬기"],["Cla.","강채은 곽현지 김은송 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 서종하 이지인 최성빈 황은선"],["Hn.","김예은 장윤주 이건"],["Tp.","박나현 강유영 김서현 박은빈 양가연 윤소현 최지웅A"],["Tb.","김재빈 김혜주 이성제 이한나 정재원 채창무"],["Eup.","박혜람 주성현"],["Tuba.","안시온 김내영"],["Per.","최상범 김소연 김영기 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"],["pa.","오세현"]],"sat-strings":[["Vn.","이채원 강은실 김석현 서한비 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Cb.","정신"]],"sat-committee":[["Vn.","이채원 강은실 김석현 손자영 이정호 임수규 장해진 차연주 최진희 최효승"],["Va.","이주영 장소현"],["Vc.","박범성 이정빈 정유희 진효남 최태원"],["Fl.","장하람 강지나 김지선 조슬기"],["Cla.","강채은 곽현지 이수형 정용성 황찬혁"],["Sax.","진승리 정신 강연수 문주은 이지인 최성빈 황은선"],["Hn.","김예은 장윤주"],["Tp.","박나현 강유영 양가연 윤소현 최지웅A"],["Tb.","채창무 김혜주 이병기 이성제"],["Eup.","박혜람 주성현"],["Tuba.","안시온"],["Per.","최상범 김소연 김한동 문경욱 석효진 신성은 이중학 전우진 전희주 최지웅B"]]};
 const TEAM_DEFAULTS={"tue-all":[["가온소리","황은선 진효남 김석현 김예은 김혜주 석효진 이병기 이수형 이주영 장소현 차연주"],["사랑소리","장하람 김서현 김지선 강지나 문주은 양가연 이건 이성제 이채련 정유희"],["생명의소리","조슬기 박은빈 강연수 김내영 김영기 김은송 김한동 박범성 윤소현 장해진 전희주 채창무"],["은혜소리","박나현 강유영 서종하 손자영 신성은 오세현 최성빈 최효승 황찬혁"],["하나된소리","진승리 곽현지 정신 김소희 이정빈 이중학 이지인 정용성 최지웅A 최지웅B 최태원"],["하늘소리","이채원 강채은 강은실 김재빈 문경욱 서한비 이한나 최상범 최진희 정재원"],["화음소리","안시온 김소연 박혜람 이정호 이하빈 임수규 장윤주 전우진 주성현"]],"tue-army":[["가온소리","황은선 김예은 김혜주 석효진 이수형"],["사랑소리","장하람 김서현 김지선 강지나 문주은 양가연 이건 이성제 이채련"],["생명의소리","조슬기 박은빈 강연수 김내영 김영기 김은송 김한동 윤소현 전희주 채창무"],["은혜소리","박나현 강유영 서종하 신성은 오세현 최성빈 황찬혁"],["하나된소리","진승리 곽현지 정신 김소희 이중학 이지인 정용성 최지웅A 최지웅B"],["하늘소리","강채은 김재빈 문경욱 이한나 최상범 정재원"],["화음소리","안시온 김소연 박혜람 이하빈 장윤주 전우진 주성현"]],"sat-army":[["가온소리","황은선 김예은 김혜주 석효진 이수형"],["사랑소리","장하람 김서현 김지선 강지나 문주은 양가연 이건 이성제 이채련"],["생명의소리","조슬기 박은빈 강연수 김내영 김영기 김은송 김한동 윤소현 전희주 채창무"],["은혜소리","박나현 강유영 서종하 신성은 오세현 최성빈 황찬혁"],["하나된소리","진승리 곽현지 정신 김소희 이중학 이지인 정용성 최지웅A 최지웅B"],["하늘소리","강채은 김재빈 문경욱 이한나 최상범 정재원"],["화음소리","안시온 김소연 박혜람 이하빈 장윤주 전우진 주성현"]],"sat-strings":[["현악파트","진효남 김석현 이주영 장소현 차연주 정유희 장해진 박범성 최효승 손자영 정신 이정빈 최태원 이채원 강은실 서한비 최진희 이정호 임수규"]],"sat-committee":[["가온소리","황은선 진효남 김석현 김예은 김혜주 석효진 이병기 이수형 이주영 장소현 차연주"],["사랑소리","장하람 김지선 강지나 문주은 양가연 이성제 정유희"],["생명의소리","조슬기 강연수 김한동 박범성 윤소현 장해진 전희주 채창무"],["은혜소리","박나현 강유영 손자영 신성은 최성빈 최효승 황찬혁"],["하나된소리","진승리 곽현지 정신 이정빈 이중학 이지인 정용성 최지웅A 최지웅B 최태원"],["하늘소리","이채원 강채은 강은실 문경욱 최상범 최진희"],["화음소리","안시온 김소연 박혜람 이정호 임수규 장윤주 전우진 주성현"]]};
 const MEETING_IDS=Object.keys(MEETING_LABELS);
 const MULTI_PREFIX='orchestra-attendance-multi-v1';
@@ -242,26 +242,23 @@ function loadRoster(){try{
  ROSTER.splice(0,ROSTER.length,...cloneRows(rows));rebuildPeople();
  }catch(e){ROSTER.splice(0,ROSTER.length,...cloneRows(MEETING_DEFAULTS[activeMeeting]));rebuildPeople();console.warn('명단 불러오기 실패',e)}}
 
-// 2026-11-13: Cb. 삭제, 정신을 Sax.의 진승리 다음으로 배치.
-// 기존 localStorage 명단에도 적용하되, 다른 개인별 변경사항은 유지한다.
-const ROSTER_MIGRATION_KEY=MULTI_PREFIX+'-sax-without-cb-v2';
+// 2026-11-14: 정신은 현악파트 모임에서만 Cb., 나머지 해당 모임에서는 Sax.
+// 기존 브라우저 저장 명단도 교정하되 다른 사람의 배치는 유지한다.
+const ROSTER_MIGRATION_KEY=MULTI_PREFIX+'-jeongsin-meeting-instruments-v3';
 function normalizeInstrumentRoster(rows,meeting){
  const source=cloneRows(rows);
- let hadPerson=false;
  for(const row of source){
-  if(row[0]==='Cb.'&&row[1].split(/\s+/).includes('정신'))hadPerson=true;
   row[1]=row[1].split(/\s+/).filter(n=>n&&n!=='정신').join(' ');
  }
- const cleaned=source.filter(row=>row[0]!=='Cb.');
- // 정신은 화요일 군악대 명단에서만 제외한다.
- const mustContain=meeting!=='tue-army'&&(hadPerson||source.some(row=>row[0]==='Sax.'&&row[1].split(/\s+/).includes('정신'))||MEETING_DEFAULTS[meeting].some(row=>row[1].split(/\s+/).includes('정신')));
- if(mustContain){
-  let sax=cleaned.find(row=>row[0]==='Sax.');
-  if(!sax){sax=['Sax.',''];cleaned.push(sax)}
-  const names=sax[1].split(/\s+/).filter(Boolean);
-  names.splice(names.includes('진승리')?names.indexOf('진승리')+1:0,0,'정신');
-  sax[1]=names.join(' ');
- }
+ // 현악파트 모임 외에는 Cb. 자체를 없앤다.
+ const cleaned=source.filter(row=>meeting==='sat-strings'||row[0]!=='Cb.');
+ const inst=meeting==='sat-strings'?'Cb.':'Sax.';
+ let row=cleaned.find(r=>r[0]===inst);
+ if(!row){row=[inst,''];cleaned.push(row)}
+ const names=row[1].split(/\s+/).filter(Boolean);
+ if(inst==='Sax.'&&names.includes('진승리'))names.splice(names.indexOf('진승리')+1,0,'정신');
+ else names.push('정신');
+ row[1]=names.join(' ');
  return cleaned;
 }
 function migrateExistingRosterAndReasons(){
@@ -317,12 +314,14 @@ function linkedTuesdayReconcile(previousRows=null){
  for(const id of SYNC_MEETINGS){
   if(id===activeMeeting)continue;
   const target=readMeetingRoster(id);
+  // 정신 님의 악기는 모임별 고정: 현악파트 Cb., 그 외 Sax.
+  const targetSourceMap=new Map([...sourceMap].map(([name,inst])=>[name,name==='정신'?(id==='sat-strings'?'Cb.':'Sax.'):inst]));
   const originalMembers=new Set(target.flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
-  for(const row of target)row[1]=row[1].split(/\s+/).filter(name=>name&&!deleted.includes(name)&&(!sourceMap.has(name)||sourceMap.get(name)===row[0])).join(' ');
-  for(const [name,inst] of sourceMap){
+  for(const row of target)row[1]=row[1].split(/\s+/).filter(name=>name&&!deleted.includes(name)&&(!targetSourceMap.has(name)||targetSourceMap.get(name)===row[0])).join(' ');
+  for(const [name,inst] of targetSourceMap){
    // Existing shared members keep their membership, but follow the new instrument.
    // Newly added members go to the overall meeting and matching instrumental meeting.
-   const allowNew=added.includes(name)&&(id==='tue-all'||(id==='tue-army'||id==='sat-army')&& !['Vn.','Va.','Vc.','Cb.'].includes(inst)||id==='sat-strings'&&['Vn.','Va.','Vc.'].includes(inst));
+   const allowNew=(name==='정신'||added.includes(name))&&(id==='tue-all'||(id==='tue-army'||id==='sat-army')&& !['Vn.','Va.','Vc.','Cb.'].includes(inst)||id==='sat-strings'&&['Vn.','Va.','Vc.','Cb.'].includes(inst));
    if(!originalMembers.has(name)&&!allowNew)continue;
    let row=target.find(r=>r[0]===inst);
    if(!row){row=[inst,''];target.push(row)}
@@ -438,7 +437,7 @@ function loadTemplate(){
    if(typeof previous==='string'&&previous.includes('{불참사유별}'))templateText=previous;
   }
  }catch(e){console.warn('양식 불러오기 실패',e)}
- templateText=normalizeAbsenceSpacing(ensureInstrumentLines(templateText.split('\n').filter(line=>line.trim()!=='Cb.' && (line.trim()!=='pa.'||ROSTER.some(r=>r[0]==='pa.'))).join('\n')));
+ templateText=normalizeAbsenceSpacing(ensureInstrumentLines(templateText.split('\n').filter(line=>(activeMeeting==='sat-strings'||line.trim()!=='Cb.') && (activeMeeting!=='sat-strings'||line.trim()!=='Sax.'||ROSTER.some(r=>r[0]==='Sax.')) && (line.trim()!=='pa.'||ROSTER.some(r=>r[0]==='pa.'))).join('\n')));
 }
 function saveTemplateStorage(){try{
  localStorage.setItem(MULTI_PREFIX+'-template-'+activeMeeting,JSON.stringify(templateText));
