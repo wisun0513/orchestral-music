@@ -137,6 +137,18 @@
  .dual-results .result{min-height:240px;max-height:min(60vh,540px);overflow:auto;-webkit-overflow-scrolling:touch}
 }
 
+/* 악기·파트 명칭과 인원수는 PC·모바일 모두 같은 줄에 배치 */
+.roster-inst .inst-title .roster-member-count{font-size:calc(1em - 3pt);font-weight:400;color:#66776e;white-space:nowrap;flex-shrink:0}
+.roster-inst .inst-title{gap:6px;white-space:nowrap;overflow-wrap:normal;word-break:keep-all}
+@media(min-width:641px){
+  #rosterList .roster-row{grid-template-columns:155px minmax(0,1fr)}
+  #teamList .roster-row.team-row{grid-template-columns:190px minmax(0,1fr)}
+  #rosterList .roster-inst .inst-title{justify-content:flex-start;padding-left:6px}
+  #teamList .roster-inst .inst-title{justify-content:flex-start}
+}
+@media(max-width:640px){
+  #rosterList .roster-inst .inst-title,#teamList .roster-inst .inst-title{white-space:nowrap;width:auto;max-width:100%}
+}
 </style>
 </head>
 <body><main>
@@ -508,21 +520,23 @@ function titleDate(){
  return `${m}. ${d}.(${w}) ${MEETING_LABELS[activeMeeting].replace(/^\([^)]+\)\s*/,'')} 출결`;
 }
 function fillTemplate(source,tokens){return source.replace(/\{(날짜|참석|부분|불참|미보고|총원|실제불참|불참사유별)\}/g,(match,k)=>Object.prototype.hasOwnProperty.call(tokens,k)?String(tokens[k]):match)}
-// 파트미보고는 이름/파트미보고 한 줄로 해당 파트 전체를 지정한다.
-// 다른 파트원의 기존 출결 상태와 무관하게, 지정된 이름의 파트를 표시한다.
-// 같은 파트의 여러 사람을 입력해도 파트명과 인원은 한 번만 집계한다.
+// ② 출결 붙여넣기를 적용했을 때 해당 날짜의 명단에 있지만 입력되지 않은
+// 인원을 자동으로 결/파트미보고 처리한다. 파트별 표시는 실제 누락 인원만 집계한다.
 function partMissingSummary(){
  const active=new Set(attendancePeople().map(person=>person.name));
- const marked=new Set(Object.entries(state.people).filter(([name,p])=>
-  active.has(name)&&p&&p.reason==='파트미보고'&&p.status==='결'
- ).map(([name])=>name));
- const teams=[];
+ const missing=new Set([...active].filter(name=>{
+  const p=get(name);return p.status==='결'&&p.reason==='파트미보고';
+ }));
+ const teams=[],assigned=new Set();
  for(const [team,names] of TEAM_ROSTER){
-  const members=[...new Set(names.split(/\s+/).filter(Boolean).filter(name=>active.has(name)))];
-  if(!members.length||!members.some(name=>marked.has(name)))continue;
+  const members=[...new Set(names.split(/\s+/).filter(Boolean))].filter(name=>active.has(name)&&missing.has(name)&&!assigned.has(name));
+  if(!members.length)continue;
+  members.forEach(name=>assigned.add(name));
   teams.push({name:team,count:members.length});
  }
- return {teams,total:teams.reduce((sum,t)=>sum+t.count,0)};
+ const unassigned=[...missing].filter(name=>!assigned.has(name));
+ if(unassigned.length)teams.push({name:'파트 미지정',count:unassigned.length});
+ return {teams,total:missing.size};
 }
 function compute(){
  const partMissing=partMissingSummary();
@@ -606,11 +620,11 @@ function renderResults(){
  document.getElementById('outputMeetingName').textContent=MEETING_LABELS[activeMeeting]+' · '+state.date;
  const missingParts=partMissingSummary();
  document.getElementById('stats').innerHTML=[['전체',c.total],['참석',c.att],['부분 참석',c.partial],['미보고',c.unreported],['파트미보고',c.partUnreported],['불참',c.abs-c.unreported]].map(([l,n])=>l==='파트미보고'
-  ? `<div class="stat part-stat"><small>파트미보고</small><b>${n?n+'명':'없음'}</b>${missingParts.teams.length?`<span class="part-teams">${missingParts.teams.map(t=>esc(t.name.replace(/^\s*(?:>>|＞＞)\s*/,''))).join(' ')}</span>`:''}</div>`
+  ? `<div class="stat part-stat"><small>파트미보고</small><b>${missingParts.teams.length?missingParts.teams.map(t=>esc(t.name.replace(/^\s*(?:>>|＞＞)\s*/,''))).join(', '):'없음'}</b><span class="part-teams">(${n}명)</span></div>`
   : `<div class="stat"><small>${l}</small><b>${n}명</b></div>`).join('');
  const msg=document.getElementById('checkMessage');msg.className='notice '+(c.total===c.att+c.abs?'success':'');
  const extra=activeMeeting==='tue-army'?`\n주일 예배위원 제외 ${(state.excludedSunday||[]).filter(n=>PEOPLE.some(p=>p.name===n)).length}명 · 조슬기/최성빈 기본 참석 적용`:'';
- msg.textContent=`전체 ${c.total}명 = 참석 ${c.att}명 + 불참·미보고 ${c.abs}명\n미보고 ${c.unreported}명 : ${c.unreported?o.missing.join(', '):'없음'}`+extra;
+ msg.textContent=`전체 ${c.total}명 = 참석 ${c.att}명 + 불참·미보고 ${c.abs}명\n미보고 ${c.unreported}명 : ${c.unreported?o.missing.join(', '):'없음'}\n파트미보고 : ${missingParts.teams.length?missingParts.teams.map(t=>`${t.name.replace(/^\s*(?:>>|＞＞)\s*/,'')}(${t.count}명)`).join(', '):'없음'}`+extra;
  const displayed=outputFormat==='team'?computeTeam():o;
  document.getElementById('result').textContent=displayed.full;
  document.getElementById('resultHeading').textContent='복사용 최종 텍스트 · '+(outputFormat==='team'?'최종 출결':'기존 출결 양식');
@@ -628,7 +642,7 @@ function bulkNameKey(name){return cleanName(name).replace(/[a-z]/g,ch=>ch.toUppe
 function applyBulk(){
  const input=document.getElementById('bulkInput').value,lines=input.split(/\r?\n/);
  const known=new Map(PEOPLE.map(p=>[bulkNameKey(p.name),p.name]));
- const updates=new Map(),errors=[],duplicates=[],ignored=[];
+ const updates=new Map(),errors=[],duplicates=[],ignored=[],recognized=new Set();
  let valid=0;
  for(let i=0;i<lines.length;i++){
   const line=lines[i].trim();if(!line)continue;
@@ -639,8 +653,9 @@ function applyBulk(){
   if(fields.length<2){const m=cleanLine.match(/^(.+?)\s+(출|결|부분|미보고|파트미보고)(?:\s+(.+))?$/);if(m)fields=[m[1],m[2],m[3]||'']}
   const raw=fields[0]||'',name=known.get(bulkNameKey(normalizedInputName(raw)));
   if(!name){ignored.push(raw||line);continue}
-  // 이름만 있거나 이름/만 입력하면 아직 기록하지 않은 상태를 유지한다.
-  if(fields.length<2||!fields[1])continue;
+  recognized.add(name);
+  // 이름만 있거나 이름/만 입력했다면 그 사람은 인식된 것으로 처리하되 미보고로 둔다.
+  if(fields.length<2||!fields[1]){updates.set(name,empty());continue;}
   if(fields.length>5){errors.push(`${i+1}행: ${name} 항목이 5개를 초과합니다.`);continue}
   let [,statusRaw='',reasonRaw='',detailRaw='',timeRaw='']=fields;
   if(!STATUSES.includes(statusRaw.replace(/\s/g,''))&&REASONS.includes(statusRaw)){
@@ -656,10 +671,30 @@ function applyBulk(){
   if(updates.has(name))duplicates.push(`${i+1}행: ${name} 중복 입력(마지막 입력 적용)`);
   updates.set(name,{status,reason:reasonRaw,detail:detailRaw,time:timeRaw});valid++;
  }
+ // 유효한 명단 이름이 하나도 없는 입력은 잘못 붙여넣었을 가능성이 커서
+ // 모든 인원을 파트미보고로 바꾸지 않도록 차단한다.
+ if(!recognized.size){
+  const m=document.getElementById('bulkMessage');m.classList.remove('hidden');m.className='notice';
+  m.textContent='현재 모임의 명단에서 확인된 이름이 없습니다. 출결 내용을 확인한 후 다시 적용해주세요.';
+  return;
+ }
+ // 이번 붙여넣기 기준으로 날짜별 출결을 갱신한다. 명단에는 있으나
+ // 붙여넣기에서 찾지 못한 이름은 자동으로 결/파트미보고가 된다.
+ const autoMissing=[];
+ for(const {name} of attendancePeople()){
+  if(!recognized.has(name)){
+   updates.set(name,{status:'결',reason:'파트미보고',detail:'',time:''});
+   autoMissing.push(name);
+  }else if(!updates.has(name)){
+   // 명단에 이름은 있었지만 잘못된 상태값 때문에 처리되지 않은 경우
+   // 자동 누락으로 보지 않고 미보고로 표시한다.
+   updates.set(name,empty());
+  }
+ }
  for(const [name,p] of updates)state.people[name]=p;
  save();renderResults();
  const m=document.getElementById('bulkMessage');m.classList.remove('hidden');m.className='notice '+(errors.length?'':'success');
- m.textContent=`${updates.size}명 출결 적용 완료. 입력 순서와 관계없이 선택한 모임의 악기별·파트별 명단 순서로 결과를 정리합니다.`+
+ m.textContent=`${updates.size}명 출결 적용 완료 (명단에는 있으나 입력에서 확인되지 않은 ${autoMissing.length}명은 결/파트미보고 자동 적용). 입력 순서와 관계없이 선택한 모임의 악기별·파트별 명단 순서로 결과를 정리합니다.`+
   (ignored.length?`\n현재 모임의 악기별 명단에 없는 ${ignored.length}개 항목은 집계하지 않았습니다: ${ignored.slice(0,15).join(', ')}${ignored.length>15?' 외':''}`:'')+
   (duplicates.length?'\n'+duplicates.join('\n'):'')+(errors.length?'\n확인 필요:\n'+errors.join('\n'):'');
  m.scrollIntoView({behavior:'smooth',block:'nearest'});
@@ -774,7 +809,7 @@ function renderRoster(){
  ROSTER.forEach(([inst,names],ri)=>{
   const row=document.createElement('div');row.className='roster-row';row.dataset.ri=String(ri);
   const tag=document.createElement('div');tag.className='roster-inst';
-  const label=document.createElement('span');label.className='inst-title';label.textContent=inst;label.draggable=!window.matchMedia('(pointer:coarse)').matches;
+  const label=document.createElement('span');label.className='inst-title';label.append(document.createTextNode(inst));const count=document.createElement('span');count.className='roster-member-count';count.textContent=`(${names.split(/\s+/).filter(Boolean).length}명)`;label.append(count);label.draggable=!window.matchMedia('(pointer:coarse)').matches;
   label.title=`${inst}: 길게 눌러 선택한 뒤 다른 악기 이름을 누르면 순서 변경, PC 드래그 가능`;
   label.setAttribute('role','button');label.setAttribute('tabindex','0');
   label.setAttribute('aria-label',`${inst} 악기: 길게 눌러 순서 이동`);
@@ -1091,7 +1126,7 @@ function renderTeams(){
  TEAM_ROSTER.forEach(([title,names],ti)=>{
   const row=document.createElement('div');row.className='roster-row team-row';row.dataset.teamIndex=String(ti);
   const side=document.createElement('div');side.className='roster-inst';
-  const label=document.createElement('span');label.className='inst-title';label.textContent=title;label.tabIndex=0;label.title='파트 순서 변경: PC 드래그 또는 클릭 후 이동할 파트 클릭';label.draggable=!window.matchMedia('(pointer:coarse)').matches;
+  const label=document.createElement('span');label.className='inst-title';label.append(document.createTextNode(title));const count=document.createElement('span');count.className='roster-member-count';count.textContent=`(${names.split(/\s+/).filter(Boolean).length}명)`;label.append(count);label.tabIndex=0;label.title='파트 순서 변경: PC 드래그 또는 클릭 후 이동할 파트 클릭';label.draggable=!window.matchMedia('(pointer:coarse)').matches;
   if(selectedTeamRow===ti)label.classList.add('instrument-selected');
   label.addEventListener('click',()=>{if(suppressTeamClick){suppressTeamClick=false;return}teamHeadingClick(ti)});label.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();teamHeadingClick(ti)}else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const to=Math.min(TEAM_ROSTER.length-1,Math.max(0,ti+(e.key==='ArrowUp'?-1:1)));moveTeamRow(ti,to);document.querySelector(`#teamList [data-team-index=\"${to}\"] .inst-title`)?.focus()}});
   label.addEventListener('dragstart',e=>{draggingTeamRow=ti;e.dataTransfer.setData('text/plain',title);e.dataTransfer.effectAllowed='move'});
