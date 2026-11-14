@@ -149,6 +149,16 @@
 @media(max-width:640px){
   #rosterList .roster-inst .inst-title,#teamList .roster-inst .inst-title{white-space:nowrap;width:auto;max-width:100%}
 }
+.hold-drop-target{outline:2px dashed #18764f!important;outline-offset:-2px;background:#edf8f0!important}
+.roster-member.long-press,.inst-title.long-press{background:#c9eed9!important;outline:2px solid #18764f}
+@media(pointer:coarse){#rosterList .roster-member,#teamList .roster-member,#rosterList .roster-member span,#teamList .roster-member span,#rosterList .inst-title,#teamList .inst-title{touch-action:pan-y;cursor:pointer}}
+.instrument-remove{display:inline-flex;align-items:center;justify-content:center;vertical-align:middle;margin-left:5px;width:24px;height:24px;padding:0;background:#fbece9;color:#9b3c26;border-radius:6px;font-size:14px}
+.roster-inst .inst-title{display:inline-flex;vertical-align:middle;width:auto;max-width:calc(100% - 32px)}
+@media(max-width:640px){.instrument-remove{width:23px;height:23px;margin-left:3px}}
+.roster-sync-guide{background:#edf6f0;border:1px solid #bdd8c5;border-radius:10px;padding:12px 14px;margin:12px 0 14px;color:#204333;font-size:13px;line-height:1.55;word-break:keep-all}
+.roster-sync-guide strong{display:flex;align-items:center;gap:7px;font-size:14px;margin-bottom:6px;color:#174d3d}
+.roster-sync-guide .notice-exclamation{display:inline-flex;align-items:center;justify-content:center;flex:0 0 17px;width:17px;height:17px;border:1.8px solid #174d3d;border-radius:50%;font-size:12px;font-weight:800;line-height:1}
+.roster-sync-guide p{margin:5px 0;line-height:1.55}
 </style>
 </head>
 <body><main>
@@ -168,13 +178,18 @@
 <section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/상태/사유/상세사유/부분참석시간</b></p><p class="hint">이름 뒤에 붙는 영문자는 대문자·소문자 동일하게 인식합니다.</p><p class="hint">예 : 김계시a = 김계시A</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
+<div class="roster-sync-guide" role="note" aria-label="명단 연동 안내">
+  <strong><span class="notice-exclamation" aria-hidden="true">!</span> 명단 연동 안내</strong>
+  <p>(화) 관현악 전체모임, (화) 전체모임 군악대, (토) 군악대 모임, (토) 현악파트 모임은 공통 인원의 악기별·파트별 명단 변경사항이 연동됩니다.</p>
+  <p>(토) 관현악 예배위원 모임은 다른 모임과 동기화되지 않으며, 해당 모임 내 악기별·파트별 명단 변경사항만 연동됩니다.</p>
+</div>
 <div class="roster-tabs" role="group" aria-label="명단 분류"><button id="instrumentTab" type="button" class="active">악기별 명단</button><button id="teamTab" type="button" class="secondary">파트별 명단</button></div>
-<div id="instrumentPanel"><p class="hint">악기와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. ✎ 이름 수정 · × 이름 삭제</p>
+<div id="instrumentPanel"><p class="hint">악기와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. 모바일에서는 드래그가 불가합니다. ✎ 이름 수정 · × 이름·악기 삭제</p>
 <div class="member-add-panel"><h3>파트원 추가</h3><div class="row"><label for="rosterInstrument">악기</label><select id="rosterInstrument" aria-label="추가할 악기"></select><label for="rosterPart">파트</label><select id="rosterPart" aria-label="배정할 파트"></select><input id="rosterName" type="text" placeholder="추가할 이름" aria-label="추가할 이름" style="flex:1;min-width:150px"><button id="addRoster">파트원 추가</button></div></div><div id="rosterList"></div></div>
-<div id="teamPanel" class="hidden"><p class="hint">파트와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. ✎ 이름 수정 · × 이름 삭제</p>
+<div id="teamPanel" class="hidden"><p class="hint">파트와 파트원을 드래그하거나, 선택한 뒤 이동할 위치를 눌러 순서를 변경할 수 있습니다. 모바일에서는 드래그가 불가합니다. ✎ 이름 수정 · × 이름 삭제</p>
 <div class="member-add-panel"><h3>파트원 추가</h3>
 <div class="row"><label for="teamAssignment">파트</label><select id="teamAssignment" aria-label="추가할 파트"></select><label for="teamInstrument">악기</label><select id="teamInstrument" aria-label="추가할 사람의 악기"></select><input id="newTeamPerson" placeholder="추가할 이름" aria-label="추가할 이름"><button id="assignTeam">파트원 추가</button></div></div>
-<div id="teamList"></div>
+<div class="row" style="margin:5px 0 12px"><button class="secondary" id="sortTeamsKorean" type="button">가나다 순</button></div><div id="teamList"></div>
 <div id="teamMessage" class="notice hidden" role="status"></div></div>
 <div id="rosterMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><div class="hint" id="reasonHint" style="white-space:pre-line">미보고와 파트미보고는 순서 변경이 불가합니다.
@@ -291,9 +306,10 @@ function migrateExistingRosterAndReasons(){
  }catch(e){console.warn('명단 마이그레이션 실패',e)}
 }
 
-/* 네 모임의 공통 인원은 악기/순서/이름 변경을 동기화한다.
-   (토) 예배위원 명단은 동기화하지 않는다. 각 모임 대상 인원은 유지한다. */
-const SYNC_MEETINGS=['tue-all','tue-army','sat-army','sat-strings'];
+/* 화·토 일반 4개 모임끼리만 변경사항 동기화한다.
+   토요일 관현악 예배위원 모임은 완전히 독립적으로 관리한다.
+   각 모임 내부의 악기별·파트별 명단은 동일 인원을 참조한다. */
+const SYNC_MEETINGS=MEETING_IDS.filter(id=>id!=='sat-committee');
 function readMeetingRoster(id){
  try{const data=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-roster-'+id)||'null');return validateRows(data)?cloneRows(data):cloneRows(MEETING_DEFAULTS[id])}
  catch(e){return cloneRows(MEETING_DEFAULTS[id])}
@@ -322,18 +338,21 @@ function linkedTuesdayReconcile(previousRows=null){
  const afterNames=new Set(ROSTER.flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
  const deleted=[...beforeNames].filter(name=>!afterNames.has(name));
  const added=[...afterNames].filter(name=>!beforeNames.has(name));
+ const addedInstruments=ROSTER.map(r=>r[0]).filter(inst=>!before.some(r=>r[0]===inst));
  const sourceMap=new Map(ROSTER.flatMap(([inst,names])=>names.split(/\s+/).filter(Boolean).map(name=>[name,inst])));
  for(const id of SYNC_MEETINGS){
   if(id===activeMeeting)continue;
   const target=readMeetingRoster(id);
+  for(const inst of addedInstruments)if(!target.some(r=>r[0]===inst)&&!(id==='sat-strings'&&inst==='Sax.')&&!(id!=='sat-strings'&&inst==='Cb.'))target.push([inst,'']);
   // 정신 님의 악기는 모임별 고정: 현악파트 Cb., 그 외 Sax.
   const targetSourceMap=new Map([...sourceMap].map(([name,inst])=>[name,name==='정신'?(id==='sat-strings'?'Cb.':'Sax.'):inst]));
+  if(id==='sat-strings')for(const [name,inst] of targetSourceMap){if(!['Vn.','Va.','Vc.','Cb.'].includes(inst)){const old=target.find(row=>row[1].split(/\s+/).includes(name));if(old)targetSourceMap.set(name,old[0]);}}
   const originalMembers=new Set(target.flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
   for(const row of target)row[1]=row[1].split(/\s+/).filter(name=>name&&!deleted.includes(name)&&(!targetSourceMap.has(name)||targetSourceMap.get(name)===row[0])).join(' ');
   for(const [name,inst] of targetSourceMap){
    // Existing shared members keep their membership, but follow the new instrument.
    // Newly added members go to the overall meeting and matching instrumental meeting.
-   const allowNew=(name==='정신'||added.includes(name))&&(id==='tue-all'||(id==='tue-army'||id==='sat-army')&& !['Vn.','Va.','Vc.','Cb.'].includes(inst)||id==='sat-strings'&&['Vn.','Va.','Vc.','Cb.'].includes(inst));
+   const allowNew=(name==='정신'||added.includes(name))&&(id==='tue-all'||id==='sat-committee'||(['tue-army','sat-army'].includes(id)&& !['Vn.','Va.','Vc.','Cb.'].includes(inst))||(id==='sat-strings'&&['Vn.','Va.','Vc.','Cb.'].includes(inst)));
    if(!originalMembers.has(name)&&!allowNew)continue;
    let row=target.find(r=>r[0]===inst);
    if(!row){row=[inst,''];target.push(row)}
@@ -351,6 +370,11 @@ function linkedTuesdayReconcile(previousRows=null){
     return a.i-b.i;
    }).map(x=>x.n).join(' ');
   }
+  // Keep the source instrument ordering for shared instruments, preserving target-only instruments.
+  const instOrder=new Map(ROSTER.map((r,i)=>[r[0],i]));
+  const targetRows=target.map((row,i)=>({row,i}));
+  targetRows.sort((a,b)=>instOrder.has(a.row[0])&&instOrder.has(b.row[0])?instOrder.get(a.row[0])-instOrder.get(b.row[0]):a.i-b.i);
+  target.splice(0,target.length,...targetRows.map(x=>x.row));
   // 현악파트 모임에는 Sax. 악기를 만들거나 유지하지 않는다.
   if(id==='sat-strings')target.splice(0,target.length,...target.filter(row=>row[0]!=='Sax.'));
   writeMeetingRoster(id,target);
@@ -366,6 +390,49 @@ function linkedTuesdayReconcile(previousRows=null){
  }
 }
 
+function readMeetingTeams(id){
+ try{const rows=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-teams-'+id)||'null');return Array.isArray(rows)&&(rows.length===0||validateRows(rows))?cloneRows(rows):cloneRows(TEAM_DEFAULTS[id])}
+ catch(e){return cloneRows(TEAM_DEFAULTS[id])}
+}
+function writeMeetingTeams(id,rows){try{localStorage.setItem(MULTI_PREFIX+'-teams-'+id,JSON.stringify(rows))}catch(e){console.warn('파트 동기화 실패',e)}}
+// 이름, 파트 이동, 파트 내 순서, 파트 순서 변경을 공유 인원에 반영한다.
+// 대상 모임에 없는 사람은 생성하지 않고, 해당 모임만의 사람/파트는 유지한다.
+function reconcileTeams(before,rename=null){
+ const after=cloneRows(TEAM_ROSTER);
+ const beforeOwners=new Map(before.flatMap(([part,names])=>names.split(/\s+/).filter(Boolean).map(n=>[n,part])));
+ const afterOwners=new Map(after.flatMap(([part,names])=>names.split(/\s+/).filter(Boolean).map(n=>[n,part])));
+ const beforeParts=new Set(before.map(r=>r[0]));
+ const afterParts=new Set(after.map(r=>r[0]));
+ const deleted=[...beforeParts].filter(n=>!afterParts.has(n)&&n!==rename?.old);
+ const changed=[...afterOwners].filter(([name,part])=>beforeOwners.get(name)!==part && !(rename&&beforeOwners.get(name)===rename.old&&part===rename.next)).map(([name])=>name);
+ const order=new Map(after.map((r,i)=>[r[0],i]));
+ for(const id of SYNC_MEETINGS){
+  if(id===activeMeeting)continue;
+  const target=readMeetingTeams(id);
+  if(rename){const old=target.find(r=>r[0]===rename.old),existing=target.find(r=>r[0]===rename.next);if(old){if(existing&&existing!==old){existing[1]=[existing[1],old[1]].filter(Boolean).join(' ');target.splice(target.indexOf(old),1)}else old[0]=rename.next}}
+  for(let i=target.length-1;i>=0;i--)if(deleted.includes(target[i][0]))target.splice(i,1);
+  const eligible=new Set(readMeetingRoster(id).flatMap(row=>row[1].split(/\s+/).filter(Boolean)));
+  // Only apply changed assignments, never overwrite pre-existing special team rosters wholesale.
+  for(const name of changed){
+   if(!eligible.has(name))continue;
+   const part=afterOwners.get(name);
+   for(const row of target)row[1]=row[1].split(/\s+/).filter(n=>n!==name).join(' ');
+   let dest=target.find(r=>r[0]===part);if(!dest){dest=[part,''];target.push(dest)}
+   dest[1]=[dest[1],name].filter(Boolean).join(' ');
+  }
+  // Added empty parts also synchronize; existing meeting-specific groups remain untouched.
+  for(const [part] of after)if(!beforeParts.has(part)&&!target.some(r=>r[0]===part))target.push([part,'']);
+  // Preserve unique members and only reorder names that belong to the same source part.
+  for(const row of target){
+   const src=after.find(r=>r[0]===row[0]);if(!src)continue;
+   const rank=new Map(src[1].split(/\s+/).filter(Boolean).map((n,i)=>[n,i]));
+   row[1]=row[1].split(/\s+/).filter(Boolean).map((n,i)=>({n,i})).sort((a,b)=>rank.has(a.n)&&rank.has(b.n)?rank.get(a.n)-rank.get(b.n):a.i-b.i).map(x=>x.n).join(' ');
+  }
+  const rows=target.map((row,i)=>({row,i}));
+  rows.sort((a,b)=>order.has(a.row[0])&&order.has(b.row[0])?order.get(a.row[0])-order.get(b.row[0]):a.i-b.i);
+  writeMeetingTeams(id,rows.map(x=>x.row));
+ }
+}
 function saveTeamRoster(){try{localStorage.setItem(MULTI_PREFIX+'-teams-'+activeMeeting,JSON.stringify(TEAM_ROSTER))}catch(e){console.warn('팀 저장 실패',e)}}
 function loadTeamRoster(){try{
  const rows=JSON.parse(localStorage.getItem(MULTI_PREFIX+'-teams-'+activeMeeting)||'null');
@@ -700,7 +767,27 @@ function applyBulk(){
  m.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 async function copy(text,button){try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(text)}else{const el=document.createElement('textarea');el.value=text;el.style.position='fixed';el.style.opacity='0';document.body.appendChild(el);el.select();const ok=document.execCommand('copy');el.remove();if(!ok)throw Error('지원하지 않음')}const old=button.textContent;button.textContent='복사 완료';setTimeout(()=>button.textContent=old,1700)}catch(e){window.prompt('자동 복사가 지원되지 않습니다. 아래 텍스트를 직접 복사하세요.',text)}}
-loadRoster();loadReasons();migrateExistingRosterAndReasons();ensureSundayReason();loadTeamRoster();loadTemplate();
+// 차연주: Vn. 소속을 유지하고 가온소리 파트 배정을 기존 브라우저 저장 명단에도 1회 반영한다.
+// 군악대 전용 모임에는 대상 인원이 아니므로 추가하지 않으며, 예배위원은 독립 명단으로 수정한다.
+function migrateChayeonjuGaon(){
+ const key=MULTI_PREFIX+'-chayeonju-gaon-v1';
+ try{
+  if(localStorage.getItem(key)==='1')return;
+  for(const id of ['tue-all','sat-committee']){
+   const roster=readMeetingRoster(id);
+   const vn=roster.find(row=>row[0]==='Vn.');
+   if(!vn||!vn[1].split(/\s+/).includes('차연주'))continue;
+   const teams=readMeetingTeams(id);
+   for(const row of teams)row[1]=row[1].split(/\s+/).filter(n=>n&&n!=='차연주').join(' ');
+   let gaon=teams.find(row=>row[0]==='가온소리');
+   if(!gaon){gaon=['가온소리',''];teams.push(gaon)}
+   gaon[1]=[gaon[1],'차연주'].filter(Boolean).join(' ');
+   writeMeetingTeams(id,teams);
+  }
+  localStorage.setItem(key,'1');
+ }catch(e){console.warn('차연주 파트 명단 반영 실패',e)}
+}
+loadRoster();loadReasons();migrateExistingRosterAndReasons();ensureSundayReason();migrateChayeonjuGaon();loadTeamRoster();loadTemplate();
  const initialDate=localStorage.getItem(MULTI_PREFIX+'-last-date');
  state.date=/^\d{4}-\d\d-\d\d$/.test(initialDate||'')?initialDate:localDate();load();
 const yearSelect=document.getElementById('yearSelect'),monthSelect=document.getElementById('monthSelect'),daySelect=document.getElementById('daySelect');
@@ -800,7 +887,45 @@ function instrumentClick(ri){
  if(selectedInstrument!==null){reorderInstrument(selectedInstrument,ri);return}
  const inst=ROSTER[ri][0];
  rosterInstrument.value=inst;lastSelectedInstrument=inst;
- rosterNotice(`${inst} 악기를 선택했습니다. 위에서 인원을 추가할 수 있습니다. 악기 순서 변경은 길게 눌러 선택하세요.`);
+ selectInstrumentForMove(ri);
+}
+// 모바일: 650ms 이상 누른 후 이동한 경우에만 실제 순서 변경
+function bindHoldDrag(element,findTarget,onDrop){
+ // 모바일/터치 기기에서는 길게 누르기 및 드래그를 비활성화한다.
+ if(window.matchMedia('(pointer:coarse)').matches)return;
+ let held=null,blockClick=false;
+ element.style.touchAction='none';
+ element.addEventListener('pointerdown',e=>{
+  if(e.pointerType==='mouse')return;
+  if(e.target.closest('button'))return;
+  const data={id:e.pointerId,x:e.clientX,y:e.clientY,armed:false,moved:false,target:null,timer:null};
+  held=data;
+  data.timer=setTimeout(()=>{if(held!==data)return;data.armed=true;element.classList.add('long-press');},650);
+  try{element.setPointerCapture(e.pointerId)}catch(_e){}
+ });
+ element.addEventListener('pointermove',e=>{
+  const d=held;if(!d||d.id!==e.pointerId)return;
+  if(!d.armed){if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>12){clearTimeout(d.timer);d.timer=null;held=null;element.classList.remove('long-press');if(element.hasPointerCapture(e.pointerId))element.releasePointerCapture(e.pointerId)}return;}
+  if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>12)d.moved=true;
+  if(!d.moved)return;
+  e.preventDefault();document.querySelectorAll('.hold-drop-target').forEach(el=>el.classList.remove('hold-drop-target'));
+  d.target=findTarget(e.clientX,e.clientY);
+  if(d.target?.element)d.target.element.classList.add('hold-drop-target');
+ });
+ const finish=(e,cancel)=>{
+  const d=held;if(!d||d.id!==e.pointerId)return;
+  clearTimeout(d.timer);held=null;element.classList.remove('long-press');
+  document.querySelectorAll('.hold-drop-target').forEach(el=>el.classList.remove('hold-drop-target'));
+  if(element.hasPointerCapture(e.pointerId))element.releasePointerCapture(e.pointerId);
+  if(d.armed){blockClick=true;setTimeout(()=>blockClick=false,350);if(!cancel&&d.moved&&d.target)onDrop(d.target);}
+ };
+ element.addEventListener('pointerup',e=>finish(e,false));element.addEventListener('pointercancel',e=>finish(e,true));
+ element.addEventListener('click',e=>{if(blockClick){e.preventDefault();e.stopImmediatePropagation();blockClick=false}},true);
+}
+function touchTarget(x,y,rootSelector,selector,indexNames){
+ const root=document.querySelector(rootSelector),el=document.elementFromPoint(x,y)?.closest(selector);
+ if(!el||!root?.contains(el))return null;
+ const data={element:el};for(const [key,attr] of indexNames)data[key]=Number(el.dataset[attr]);return data;
 }
 function renderRoster(){
  const root=document.getElementById('rosterList');root.replaceChildren();
@@ -810,45 +935,38 @@ function renderRoster(){
   const row=document.createElement('div');row.className='roster-row';row.dataset.ri=String(ri);
   const tag=document.createElement('div');tag.className='roster-inst';
   const label=document.createElement('span');label.className='inst-title';label.append(document.createTextNode(inst));const count=document.createElement('span');count.className='roster-member-count';count.textContent=`(${names.split(/\s+/).filter(Boolean).length}명)`;label.append(count);label.draggable=!window.matchMedia('(pointer:coarse)').matches;
-  label.title=`${inst}: 길게 눌러 선택한 뒤 다른 악기 이름을 누르면 순서 변경, PC 드래그 가능`;
+  label.title=`${inst}: 선택한 뒤 이동할 악기 이름을 누르면 순서 변경, PC 드래그 가능`;
   label.setAttribute('role','button');label.setAttribute('tabindex','0');
-  label.setAttribute('aria-label',`${inst} 악기: 길게 눌러 순서 이동`);
+  label.setAttribute('aria-label',`${inst} 악기: 선택 후 다른 악기를 눌러 순서 이동`);
   if(selectedRoster)label.classList.add('target-ready');
   if(selectedInstrument===ri)label.classList.add('instrument-selected');
-  let hold=null,holdPoint=null,longPressed=false;
-  label.addEventListener('pointerdown',e=>{
-   if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;
-   holdPoint={x:e.clientX,y:e.clientY};longPressed=false;
-   hold=setTimeout(()=>{hold=null;longPressed=true;selectInstrumentForMove(ri)},480);
-  });
-  label.addEventListener('pointermove',e=>{if(hold&&holdPoint&&Math.hypot(e.clientX-holdPoint.x,e.clientY-holdPoint.y)>12){clearTimeout(hold);hold=null}});
-  for(const evt of ['pointerup','pointercancel','pointerleave'])label.addEventListener(evt,()=>{if(hold){clearTimeout(hold);hold=null}});
+  bindHoldDrag(label,(x,y)=>touchTarget(x,y,'#rosterList','.roster-row',[['ri','ri']]),target=>reorderInstrument(ri,target.ri));
   label.addEventListener('contextmenu',e=>e.preventDefault());
-  label.addEventListener('click',e=>{if(longPressed){e.preventDefault();longPressed=false;return}instrumentClick(ri)});
+  label.addEventListener('click',()=>instrumentClick(ri));
   label.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();if(selectedInstrument===null&&selectedRoster===null)selectInstrumentForMove(ri);else instrumentClick(ri)}});
   label.addEventListener('dragstart',e=>{draggingInstrument=ri;selectedInstrument=null;e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',inst)});
   label.addEventListener('dragover',e=>{if(draggingInstrument!==null){e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect='move';label.classList.add('instrument-target')}});
   label.addEventListener('dragleave',()=>label.classList.remove('instrument-target'));
   label.addEventListener('drop',e=>{if(draggingInstrument===null)return;e.preventDefault();e.stopPropagation();const from=draggingInstrument;draggingInstrument=null;reorderInstrument(from,ri)});
   label.addEventListener('dragend',()=>{draggingInstrument=null;document.querySelectorAll('.instrument-target,.instrument-drag-over').forEach(el=>el.classList.remove('instrument-target','instrument-drag-over'))});
-  tag.appendChild(label);row.appendChild(tag);
+  const removeInst=document.createElement('button');removeInst.type='button';removeInst.className='instrument-remove';removeInst.textContent='×';removeInst.title=inst+' 악기 삭제';removeInst.setAttribute('aria-label',inst+' 악기 삭제');
+  removeInst.addEventListener('click',e=>{e.stopPropagation();deleteInstrument(ri)});
+  tag.appendChild(label,removeInst);row.appendChild(tag);
   const members=document.createElement('div');members.className='roster-members';
   const list=names.split(/\s+/).filter(Boolean);
   list.forEach((name,ni)=>{
-   const item=document.createElement('div');item.className='roster-member';item.draggable=true;
-   item.title=`${name}: 길게 누른 후 악기 또는 이름 선택, PC 드래그 이동`;
+   const item=document.createElement('div');item.className='roster-member';item.draggable=!window.matchMedia('(pointer:coarse)').matches;
+   item.title=`${name}: 선택한 뒤 악기 또는 이름 선택, PC 드래그 이동`;
    item.dataset.ri=String(ri);item.dataset.ni=String(ni);
    if(selectedRoster&&selectedRoster.ri===ri&&selectedRoster.ni===ni)item.classList.add('selected');
    const nameTag=document.createElement('span');nameTag.textContent=name;item.appendChild(nameTag);
-   let hold=null,holdPoint=null,longPressed=false;
-   nameTag.addEventListener('pointerdown',e=>{
-    if(e.pointerType!=='touch'&&e.pointerType!=='pen')return;
-    holdPoint={x:e.clientX,y:e.clientY};longPressed=false;
-    hold=setTimeout(()=>{hold=null;longPressed=true;selectRosterForMove(ri,ni)},480);
-   });
-   nameTag.addEventListener('pointermove',e=>{if(hold&&holdPoint&&Math.hypot(e.clientX-holdPoint.x,e.clientY-holdPoint.y)>12){clearTimeout(hold);hold=null}});
-   for(const evt of ['pointerup','pointercancel','pointerleave'])nameTag.addEventListener(evt,()=>{if(hold){clearTimeout(hold);hold=null}});
-   nameTag.addEventListener('click',e=>{if(longPressed){e.preventDefault();longPressed=false;return}selectOrMoveTo(ri,ni)});
+   bindHoldDrag(nameTag,(x,y)=>{
+    const target=document.elementFromPoint(x,y);
+    const person=target?.closest('#rosterList .roster-member');
+    if(person)return {element:person,ri:Number(person.dataset.ri),ni:Number(person.dataset.ni)};
+    return touchTarget(x,y,'#rosterList','.roster-row',[['ri','ri']]);
+   },target=>moveRoster(ri,ni,target.ri,target.ni??null));
+   nameTag.addEventListener('click',()=>selectOrMoveTo(ri,ni));
    item.addEventListener('dragstart',e=>{if(e.target.closest('button')){e.preventDefault();return}draggingRoster={ri,ni};e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',name)});
    item.addEventListener('dragover',e=>{if(draggingRoster){e.preventDefault();e.stopPropagation();e.dataTransfer.dropEffect='move';item.classList.add('drag-over')}});
    item.addEventListener('dragleave',()=>item.classList.remove('drag-over'));
@@ -874,6 +992,17 @@ function renderRoster(){
   });
   row.appendChild(members);root.appendChild(row);
  });
+}
+function deleteInstrument(ri){
+ const row=ROSTER[ri];if(!row)return;
+ const [inst,names]=row;
+ if(names.split(/\s+/).filter(Boolean).length){alert(`${inst} 악기에 등록된 사람이 있습니다. 먼저 다른 악기로 이동한 뒤 삭제하세요.`);return}
+ if(!confirm(`${inst} 악기를 삭제할까요? ${SYNC_MEETINGS.includes(activeMeeting)?'해당 악기가 비어 있는 동기화 대상 모임에서도 삭제됩니다.':'예배위원 모임에서만 삭제됩니다.'}`))return;
+ ROSTER.splice(ri,1);
+ // Other meetings with assigned people keep their existing instruments.
+ for(const id of SYNC_MEETINGS){if(id===activeMeeting)continue;const rows=readMeetingRoster(id);const index=rows.findIndex(r=>r[0]===inst);if(index>=0&&!rows[index][1].trim()){rows.splice(index,1);writeMeetingRoster(id,rows);const key=MULTI_PREFIX+'-template-'+id;try{const raw=JSON.parse(localStorage.getItem(key)||'null');if(typeof raw==='string')localStorage.setItem(key,JSON.stringify(raw.split('\n').filter(line=>line.trim()!==inst).join('\n')))}catch(e){console.warn('양식 갱신 실패',e)}}}
+ templateText=templateText.split('\n').filter(line=>line.trim()!==inst).join('\n');
+ commitRoster(`${inst} 악기를 삭제했습니다.`);
 }
 function rosterNotice(message){const el=document.getElementById('rosterMessage');el.className='notice success';el.textContent=message}
 function commitRoster(message,preferred){const beforeSync=readMeetingRoster(activeMeeting);rebuildPeople();syncTeams();saveTeamRoster();templateText=ensureInstrumentLines(templateText);saveRoster();linkedTuesdayReconcile(beforeSync);save();saveTemplateStorage();refreshInstrumentSelect(preferred);renderRoster();renderTeams();renderSunday();renderResults();rosterNotice(message)}
@@ -915,12 +1044,13 @@ function addRoster(){
  const inst=rosterInstrument.value,part=document.getElementById('rosterPart').value;
  const index=ROSTER.findIndex(r=>r[0]===inst),partIndex=TEAM_ROSTER.findIndex(r=>r[0]===part);
  if(index<0||partIndex<0){alert('악기와 파트를 선택하세요. 파트가 없다면 + 파트 추가를 이용하세요.');return}
+ const beforeTeams=readMeetingTeams(activeMeeting);
  const existing=PEOPLE.find(p=>cleanName(p.name)===cleanName(name));
  if(existing&&TEAM_ROSTER.some(([,names])=>names.split(/\s+/).includes(existing.name))){alert('이미 파트별 명단에 등록된 이름입니다.');return}
  if(!existing)ROSTER[index][1]=[ROSTER[index][1],name].filter(Boolean).join(' ');
  TEAM_ROSTER[partIndex][1]=[TEAM_ROSTER[partIndex][1],existing?.name||name].filter(Boolean).join(' ');
  field.value='';
- if(!existing)commitRoster(`${name} 님을 ${inst} 악기와 ${part} 파트에 추가했습니다.`,inst);
+ if(!existing){commitRoster(`${name} 님을 ${inst} 악기와 ${part} 파트에 추가했습니다.`,inst);reconcileTeams(beforeTeams);}
  else commitTeams(`${name} 님을 ${part} 파트에 배정했습니다. (기존 악기는 ${existing.instrument})`);
 }
 document.getElementById('addRoster').addEventListener('click',addRoster);
@@ -1053,7 +1183,7 @@ document.getElementById('newReason').addEventListener('keydown',e=>{if(e.key==='
 let selectedTeamMember=null,draggingTeamMember=null,selectedTeamRow=null,draggingTeamRow=null;
 function teamMembers(i){return TEAM_ROSTER[i][1].split(/\s+/).filter(Boolean)}
 function teamNotice(message){messageTo('teamMessage',message)}
-function commitTeams(message){selectedTeamMember=null;selectedTeamRow=null;saveTeamRoster();renderTeams();renderResults();if(message)teamNotice(message)}
+function commitTeams(message,rename=null,beforeOverride=null){const before=beforeOverride||readMeetingTeams(activeMeeting);selectedTeamMember=null;selectedTeamRow=null;saveTeamRoster();reconcileTeams(before,rename);renderTeams();renderResults();if(message)teamNotice(message)}
 function moveTeamMember(fromTeam,fromIndex,toTeam,toIndex=null){
  if(fromTeam===toTeam&&fromIndex===toIndex){selectedTeamMember=null;renderTeams();return}
  const from=teamMembers(fromTeam),to=fromTeam===toTeam?from:teamMembers(toTeam);
@@ -1128,35 +1258,16 @@ function renderTeams(){
   const side=document.createElement('div');side.className='roster-inst';
   const label=document.createElement('span');label.className='inst-title';label.append(document.createTextNode(title));const count=document.createElement('span');count.className='roster-member-count';count.textContent=`(${names.split(/\s+/).filter(Boolean).length}명)`;label.append(count);label.tabIndex=0;label.title='파트 순서 변경: PC 드래그 또는 클릭 후 이동할 파트 클릭';label.draggable=!window.matchMedia('(pointer:coarse)').matches;
   if(selectedTeamRow===ti)label.classList.add('instrument-selected');
-  label.addEventListener('click',()=>{if(suppressTeamClick){suppressTeamClick=false;return}teamHeadingClick(ti)});label.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();teamHeadingClick(ti)}else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const to=Math.min(TEAM_ROSTER.length-1,Math.max(0,ti+(e.key==='ArrowUp'?-1:1)));moveTeamRow(ti,to);document.querySelector(`#teamList [data-team-index=\"${to}\"] .inst-title`)?.focus()}});
+  label.addEventListener('click',()=>teamHeadingClick(ti));label.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();teamHeadingClick(ti)}else if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();const to=Math.min(TEAM_ROSTER.length-1,Math.max(0,ti+(e.key==='ArrowUp'?-1:1)));moveTeamRow(ti,to);document.querySelector(`#teamList [data-team-index=\"${to}\"] .inst-title`)?.focus()}});
   label.addEventListener('dragstart',e=>{draggingTeamRow=ti;e.dataTransfer.setData('text/plain',title);e.dataTransfer.effectAllowed='move'});
   label.addEventListener('dragover',e=>{if(draggingTeamRow!==null){e.preventDefault();label.classList.add('instrument-target')}});
   label.addEventListener('dragleave',()=>label.classList.remove('instrument-target'));
   label.addEventListener('drop',e=>{if(draggingTeamRow!==null){e.preventDefault();const from=draggingTeamRow;draggingTeamRow=null;moveTeamRow(from,ti)}});
   label.addEventListener('dragend',()=>{draggingTeamRow=null});
-  let touch=null,suppressTeamClick=false;
-  label.addEventListener('pointerdown',e=>{
-   if(e.pointerType==='mouse')return;
-   touch={id:e.pointerId,target:ti,initialY:e.clientY,moved:false};label.setPointerCapture(e.pointerId);
-  });
-  label.addEventListener('pointermove',e=>{
-   if(!touch||touch.id!==e.pointerId)return;
-   if(Math.abs(e.clientY-touch.initialY)>8)touch.moved=true;
-   if(!touch.moved)return;
-   e.preventDefault();root.querySelectorAll('.instrument-target').forEach(el=>el.classList.remove('instrument-target'));
-   const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('.team-row');
-   if(target&&root.contains(target)){touch.target=Number(target.dataset.teamIndex);target.classList.add('instrument-target')}
-  });
-  const endTouch=(e,cancel)=>{
-   if(!touch||touch.id!==e.pointerId)return;
-   const d=touch;touch=null;root.querySelectorAll('.instrument-target').forEach(el=>el.classList.remove('instrument-target'));
-   if(label.hasPointerCapture(e.pointerId))label.releasePointerCapture(e.pointerId);
-   if(!cancel&&d.moved){suppressTeamClick=true;moveTeamRow(ti,d.target)}
-  };
-  label.addEventListener('pointerup',e=>endTouch(e,false));label.addEventListener('pointercancel',e=>endTouch(e,true));
+  bindHoldDrag(label,(x,y)=>touchTarget(x,y,'#teamList','.team-row',[['ti','teamIndex']]),target=>moveTeamRow(ti,target.ti));
   const actions=document.createElement('div');actions.className='team-name-actions';
   const edit=document.createElement('button');edit.type='button';edit.className='mini-action';edit.textContent='✎';edit.title=title+' 파트 이름 수정';edit.setAttribute('aria-label',title+' 파트 이름 수정');edit.addEventListener('click',()=>{
-   const value=prompt('새 파트 이름',title);if(value===null)return;const next=value.trim();if(!next||/[/\r\n]/.test(next)||TEAM_ROSTER.some(([n],i)=>i!==ti&&n===next)){alert('사용할 수 없는 파트 이름입니다.');return}TEAM_ROSTER[ti][0]=next;commitTeams('파트 이름을 변경했습니다.');
+   const value=prompt('새 파트 이름',title);if(value===null)return;const next=value.trim();if(!next||/[/\r\n]/.test(next)||TEAM_ROSTER.some(([n],i)=>i!==ti&&n===next)){alert('사용할 수 없는 파트 이름입니다.');return}TEAM_ROSTER[ti][0]=next;commitTeams('파트 이름을 변경했습니다.',{old:title,next});
   });
   const remove=document.createElement('button');remove.type='button';remove.className='mini-action remove';remove.textContent='×';remove.title=title+' 파트 삭제';remove.setAttribute('aria-label',title+' 파트 삭제');remove.addEventListener('click',()=>{
    const size=teamMembers(ti).length;
@@ -1166,7 +1277,7 @@ function renderTeams(){
   actions.append(edit,remove);side.append(label,actions);row.appendChild(side);
   const members=document.createElement('div');members.className='roster-members';
   teamMembers(ti).forEach((name,ni)=>{
-   const chip=document.createElement('div');chip.className='roster-member';chip.draggable=true;chip.title=`${name}: 드래그하거나 선택 후 다른 파트/이름 클릭`;
+   const chip=document.createElement('div');chip.className='roster-member';chip.draggable=!window.matchMedia('(pointer:coarse)').matches;chip.title=`${name}: 드래그하거나 선택 후 다른 파트/이름 클릭`;
    if(selectedTeamMember?.ti===ti&&selectedTeamMember?.ni===ni)chip.classList.add('selected');
    const span=document.createElement('span');span.textContent=name;chip.appendChild(span);
    const foundRi=ROSTER.findIndex(row=>row[1].split(/\s+/).includes(name));
@@ -1176,10 +1287,13 @@ function renderTeams(){
     button.addEventListener('click',e=>{e.stopPropagation();modifyRoster(foundRi,foundNi,action)});chip.appendChild(button);
    }}
    span.addEventListener('click',()=>teamNameClick(ti,ni));
-   let timer=null,pointer=null,pressed=false;
-   span.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;pointer={x:e.clientX,y:e.clientY};timer=setTimeout(()=>{timer=null;pressed=true;selectedTeamMember={ti,ni};renderTeams();teamNotice('이동할 파트나 다른 이름을 선택하세요.')},480)});
-   span.addEventListener('pointermove',e=>{if(timer&&pointer&&Math.hypot(e.clientX-pointer.x,e.clientY-pointer.y)>12){clearTimeout(timer);timer=null}});
-   for(const type of ['pointerup','pointercancel','pointerleave'])span.addEventListener(type,()=>{if(timer){clearTimeout(timer);timer=null}});
+   chip.dataset.ti=String(ti);chip.dataset.ni=String(ni);
+   bindHoldDrag(span,(x,y)=>{
+    const target=document.elementFromPoint(x,y);
+    const person=target?.closest('#teamList .roster-member');
+    if(person)return {element:person,ti:Number(person.dataset.ti),ni:Number(person.dataset.ni)};
+    return touchTarget(x,y,'#teamList','.team-row',[['ti','teamIndex']]);
+   },target=>moveTeamMember(ti,ni,target.ti,target.ni??null));
    chip.addEventListener('dragstart',e=>{if(e.target.closest('button')){e.preventDefault();return}draggingTeamMember={ti,ni};e.dataTransfer.setData('text/plain',name);e.dataTransfer.effectAllowed='move'});
    chip.addEventListener('dragover',e=>{if(draggingTeamMember){e.preventDefault();chip.classList.add('drag-over')}});
    chip.addEventListener('dragleave',()=>chip.classList.remove('drag-over'));
@@ -1194,6 +1308,10 @@ function renderTeams(){
  });
  renderTeamAssignment();
 }
+document.getElementById('sortTeamsKorean').addEventListener('click',()=>{
+ TEAM_ROSTER.sort((a,b)=>a[0].localeCompare(b[0],'ko-KR'));
+ commitTeams('파트를 가나다 순으로 정렬했습니다.');
+});
 function switchRosterTab(tab){rosterTab=tab;document.getElementById('instrumentPanel').classList.toggle('hidden',tab!=='instrument');document.getElementById('teamPanel').classList.toggle('hidden',tab!=='team');
  document.getElementById('instrumentTab').classList.toggle('active',tab==='instrument');document.getElementById('teamTab').classList.toggle('active',tab==='team');
  document.getElementById('instrumentTab').classList.toggle('secondary',tab!=='instrument');document.getElementById('teamTab').classList.toggle('secondary',tab!=='team');
@@ -1208,12 +1326,13 @@ document.getElementById('assignTeam').addEventListener('click',()=>{
  if(teamIndex<0||instIndex<0)return;
  if(!name||/\s|\//.test(name)){alert('추가할 이름을 확인하세요. 이름에는 공백이나 /를 사용할 수 없습니다.');return}
  if(TEAM_ROSTER.some(([,names])=>names.split(/\s+/).includes(name))){alert('이미 파트별 명단에 등록된 인원입니다.');return}
+ const beforeTeams=readMeetingTeams(activeMeeting);
  const already=PEOPLE.some(p=>cleanName(p.name)===cleanName(name));
  if(!already){ROSTER[instIndex][1]=[ROSTER[instIndex][1],name].filter(Boolean).join(' ')}
  TEAM_ROSTER[teamIndex][1]=[TEAM_ROSTER[teamIndex][1],name].filter(Boolean).join(' ');
  field.value='';
  if(!already)commitRoster(`${name} 님을 ${team}에 추가하고 악기별 명단에도 등록했습니다.`,inst);
- commitTeams(`${name} 님을 ${team}에 추가했습니다.`);
+ commitTeams(`${name} 님을 ${team}에 추가했습니다.`,null,beforeTeams);
 });
 document.getElementById('newTeamPerson').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('assignTeam').click()});
 
