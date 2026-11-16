@@ -311,8 +311,8 @@ body.excel-mode #excelManager{display:block!important}
   <div id="traditionalResult" class="result" aria-label="기존 출결 양식 결과"></div>
  </div>
  <div class="previewArea" data-output-panel="final">
-  <div class="row result-title"><h2>최종출결 2</h2><div class="excel-final-actions"><button id="sendFinalExcel" class="secondary copy-all-large" type="button">구글시트 전송</button><button id="copyFinalAll" class="copy-all-large" type="button">전체 복사</button></div></div>
-  <p class="hint">개인별 최종 출결 · 이름/출결구분/사유 · 구글시트 자동 저장</p>
+  <div class="row result-title"><h2>최종출결 2</h2><div class="excel-final-actions"><button id="sendFinalExcel" class="secondary copy-all-large" type="button">엑셀 전송</button><button id="copyFinalAll" class="copy-all-large" type="button">전체 복사</button></div></div>
+  <p class="hint">개인별 최종 출결 · 이름/출결구분/사유</p>
   <div id="finalResult" class="result" aria-label="개인별 최종 출결 결과"></div><p id="excelQuickMessage" class="hint hidden" role="status"></p>
  </div>
 </div></section>
@@ -2202,15 +2202,6 @@ async function appendRowsToExcel(meeting,date,fromFinal=false){
  try{
   const rows=fromFinal?selectedExcelRows():captureExcelRows(meeting,date);
   if(!rows.length)throw Error('해당 모임에 적용할 인원이 없습니다.');
-  // Google Apps Script 웹 앱에서만 Google Sheets에 저장합니다.
-  // 저장이 성공한 경우에만 기존 로컬 엑셀 기록에도 적용합니다.
-  if(typeof google==='undefined'||!google.script||!google.script.run){
-    throw Error('구글시트 저장은 Apps Script 웹 앱 주소에서만 가능합니다. HTML 파일을 직접 열지 말고 배포된 웹 앱에서 접속하세요.');
-  }
-  const saved=await new Promise((resolve,reject)=>{
-    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)
-      .saveAttendance(meeting,date,rows);
-  });
   const zip=await prepareWorkbook(),metadata=await workbookMetadata(zip),path=metadata.paths.get(EXCEL_SHEETS[meeting]);
   if(!path)throw Error('해당 모임 시트를 찾지 못했습니다.');
   const doc=xmlParse(await zipRequired(zip,path),path),shared=await sharedStringTable(zip);
@@ -2220,9 +2211,9 @@ async function appendRowsToExcel(meeting,date,fromFinal=false){
   if(!excelDateIndex.has(meeting))excelDateIndex.set(meeting,new Map());
   excelDateIndex.get(meeting).set(date,rows);
   renderAllExcelDates();
-  excelNotice(`구글시트 저장 완료: ${EXCEL_SHEETS[meeting]} · ${date} · ${saved.count}명. ${saved.replaced?'기존 '+saved.replaced+'행 교체':'신규 저장'}. 로컬 엑셀에도 적용했습니다. 같은 모임·날짜는 중복 누적되지 않습니다.`);
+  excelNotice(`${EXCEL_SHEETS[meeting]} · ${date} · ${rows.length}명 ${result.removed?'기존 '+result.removed+'행을 최신 출결로 수정':'신규 전송'} 완료. 같은 모임·날짜는 중복 누적되지 않습니다. 엑셀 적용 탭에서 다운로드하세요.`);
   renderExcelBatches();
- }catch(error){excelNotice('전송 실패 또는 로컬 엑셀 반영 오류: '+(error?.message||String(error)),true)}
+ }catch(error){excelNotice('엑셀 적용 실패: '+error.message,true)}
  finally{excelBusy=false}
 }
 function excelFileStem(s){return String(s||'관현악_출결').replace(/\.xlsx$/i,'').replace(/[<>:"/\\|?*\u0000-\u001f]/g,'_').slice(0,70)}
