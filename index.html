@@ -242,7 +242,7 @@ body.excel-mode #excelManager{display:block!important}
 <section class="section hidden" id="sundaySection">
 <h2 id="sundayTitle">주일 예배위원 제외</h2>
 <p class="muted guide-lines">해당하는 주일 예배위원 명단을 붙여넣으세요. 붙여넣은 텍스트에서 이름만 인식하여 적용합니다.
-해당 명단은 군악대 출결 대상에서 제외되고 사유는 예배위원으로 표시됩니다. <strong>대장, 교관은 군악대 참석에 고정으로 적용됩니다.</strong></p>
+해당 명단은 군악대 출결 대상에서 제외되고 사유는 예배위원으로 표시됩니다. <strong>조슬기·최성빈은 예배위원 명단에 있어도 참석으로 처리하며, 부분참석을 입력하면 부분으로 표시됩니다.</strong></p>
 <label for="sundayPaste"><b>제외할 예배위원 명단 붙여넣기</b></label>
 <textarea id="sundayPaste" class="sunday-paste" spellcheck="false" placeholder=""></textarea>
 <div class="row" style="margin-top:10px"><button id="applySunday">주일 예배위원 명단 적용</button><button type="button" class="secondary" id="clearSundayPaste">입력창 비우기</button><span id="sundayCount" class="pill">제외 0명</span></div>
@@ -675,9 +675,17 @@ function meetingDateForWeek(meeting,baseDate=localDate()){
  return [date.getFullYear(),String(date.getMonth()+1).padStart(2,'0'),String(date.getDate()).padStart(2,'0')].join('-');
 }
 function empty(){return {status:'미보고',reason:'',detail:'',time:''}}
+function isTuesdayArmyFixedAttendee(name){
+ return activeMeeting==='tue-army'&&(name==='조슬기'||name==='최성빈');
+}
 function get(name){
  const record=state.people[name];
- if(activeMeeting==='tue-army'&&(name==='조슬기'||name==='최성빈')&&(!record||record.status==='미보고'))return {status:'출',reason:'',detail:'',time:''};
+ // 화요일 군악대의 대장·교관은 예배위원/미보고/파트미보고 등과 관계없이 기본 참석.
+ // 단, 직접 입력한 부분참석 기록은 기존 사유·상세사유·시간과 함께 유지한다.
+ if(isTuesdayArmyFixedAttendee(name)){
+  if(record?.status==='부분')return record;
+  return {status:'출',reason:'',detail:'',time:''};
+ }
  // 예배위원 사유는 화요일 전체모임 군악대 전용이다. 이전 저장 데이터에도 이 표시 제한을 적용한다.
  if(activeMeeting!=='tue-army'&&record?.reason==='예배위원')return {...record,reason:''};
  return record||empty();
@@ -728,9 +736,9 @@ function load(){
 function excludedSundayNames(){
  if(activeMeeting!=='tue-army')return [];
  const excluded=new Set(state.excludedSunday||[]);
- return PEOPLE.map(p=>p.name).filter(name=>excluded.has(name));
+ return PEOPLE.map(p=>p.name).filter(name=>excluded.has(name)&&!isTuesdayArmyFixedAttendee(name));
 }
-function isExcludedSunday(name){return activeMeeting==='tue-army'&&(state.excludedSunday||[]).includes(name)}
+function isExcludedSunday(name){return activeMeeting==='tue-army'&&!isTuesdayArmyFixedAttendee(name)&&(state.excludedSunday||[]).includes(name)}
 function getForOutput(name){
  // 대상 제외는 집계에만 적용하며, 양식에는 그 사람을 예배위원 사유로 출력한다.
  if(isExcludedSunday(name))return {status:'결',reason:'예배위원',detail:'',time:''};
@@ -944,7 +952,7 @@ function renderResults(){
   ? `<div class="stat part-stat"><small>파트미보고</small><b>${missingParts.teams.length?missingParts.teams.map(t=>esc(t.name.replace(/^\s*(?:>>|＞＞)\s*/,''))).join(', '):'없음'}</b><span class="part-teams">(${n}명)</span></div>`
   : `<div class="stat"><small>${l}</small><b>${n}명</b></div>`).join('');
  const msg=document.getElementById('checkMessage');msg.className='notice '+(c.total===c.att+c.abs?'success':'');
- const extra=activeMeeting==='tue-army'?`\n주일 예배위원 제외 ${(state.excludedSunday||[]).filter(n=>PEOPLE.some(p=>p.name===n)).length}명 · 조슬기/최성빈 기본 참석 적용`:'';
+ const extra=activeMeeting==='tue-army'?`\n주일 예배위원 제외 ${excludedSundayNames().length}명 · 조슬기/최성빈 기본 참석 적용`:'';
  msg.textContent=`전체 ${c.total}명 = 참석 ${c.att}명 + 불참·미보고 ${c.abs}명\n미보고 ${c.unreported}명 : ${c.unreported?o.missing.join(', '):'없음'}\n파트미보고 : ${missingParts.teams.length?missingParts.teams.map(t=>`${t.name.replace(/^\s*(?:>>|＞＞)\s*/,'')}(${t.count}명)`).join(', '):'없음'}`+extra;
  const displayed=outputFormat==='team'?computeTeam():o;
  document.getElementById('result').textContent=displayed.full;
@@ -1004,6 +1012,12 @@ function applyBulk(){
  const autoMissing=[];
  for(const {name} of attendancePeople()){
   if(!recognized.has(name)){
+   if(isTuesdayArmyFixedAttendee(name)){
+    // Keep existing partial participation where entered; otherwise get() supplies '출'.
+    if(state.people[name]?.status==='부분')updates.set(name,state.people[name]);
+    else updates.set(name,{status:'출',reason:'',detail:'',time:''});
+    continue;
+   }
    updates.set(name,{status:'결',reason:'파트미보고',detail:'',time:''});
    autoMissing.push(name);
   }else if(!updates.has(name)){
@@ -1678,7 +1692,7 @@ function renderSunday(){
  renderSundayCount();
 }
 function renderSundayCount(){
- document.getElementById('sundayCount').textContent=`제외 ${(state.excludedSunday||[]).filter(n=>PEOPLE.some(p=>p.name===n)).length}명 / 출결 대상 ${attendancePeople().length}명`;
+ document.getElementById('sundayCount').textContent=`제외 ${excludedSundayNames().length}명 / 출결 대상 ${attendancePeople().length}명`;
 }
 document.getElementById('clearSundayPaste').addEventListener('click',()=>{document.getElementById('sundayPaste').value='';});
 document.getElementById('applySunday').addEventListener('click',()=>{
@@ -1687,8 +1701,8 @@ document.getElementById('applySunday').addEventListener('click',()=>{
  const known=new Map(PEOPLE.map(p=>[cleanName(p.name),p.name]));
  const names=new Set(),unknown=[];
  for(const item of tokens){const name=known.get(cleanName(item));if(name)names.add(name);else unknown.push(item)}
- state.excludedSunday=[...names];save();renderSunday();renderResults();
- messageTo('sundayMessage',`${names.size}명 제외 지정 완료.`+(unknown.length?' 현재 군악대 명단에 없는 항목: '+unknown.join(', '):''),!unknown.length);
+ state.excludedSunday=[...names].filter(name=>!isTuesdayArmyFixedAttendee(name));save();renderSunday();renderResults();
+ messageTo('sundayMessage',`${state.excludedSunday.length}명 제외 지정 완료. 조슬기·최성빈은 항상 출결 대상입니다.`+(unknown.length?' 현재 군악대 명단에 없는 항목: '+unknown.join(', '):''),!unknown.length);
 });
 
 /* 모임별 명단/팀명단/출결/출력 제목 전환 */
