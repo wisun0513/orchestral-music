@@ -1025,9 +1025,17 @@ function computeWeeklyStatus(){
  for(const reason of reasonKeys){
   const people=reasonGroups.get(reason)||[];
   lines.push('',`${reason} ${people.length}명`);
-  for(const person of people){
-   // 상세사유 입력이 없다면 이름만 표기한다 (직장·타지도 동일).
-   lines.push(person.name+(person.detail?'('+person.detail+')':''));
+  if(people.length){
+   // 4번째 입력값(상세사유)이 같은 사람들은 이름을 연속해 쓰고 상세사유는 묶음 끝에 한 번만 표시.
+   // 예: 김00/가정사/육아, 이00/가정사/육아 → 김00 이00(육아)
+   // 상세사유가 없는 사람은 이름만 묶어서 표시. 서로 다른 상세사유는 각각 별도 묶음.
+   const detailGroups=new Map();
+   for(const person of people){
+    const detail=person.detail;
+    if(!detailGroups.has(detail))detailGroups.set(detail,[]);
+    detailGroups.get(detail).push(person.name);
+   }
+   lines.push([...detailGroups].map(([detail,names])=>names.join(' ')+(detail?'('+detail+')':'')).join(' '));
   }
  }
  return lines.join('\n');
