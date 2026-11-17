@@ -290,7 +290,7 @@ body.excel-mode #reviewManager{display:none!important}
 </style>
 </head>
 <body><main>
-<header><div class="header-title-row"><h1 id="mainTitle">관현악, 군악대 출결 관리</h1><a class="sheet-shortcut sheet-shortcut-top" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer" aria-label="구글 스프레드시트 새 탭에서 열기">↗ 구글시트</a></div><p class="muted" id="headerCount">현재 57명 기준</p><nav class="tabnav"><a href="#bulk">출결 붙여넣기</a><a href="#roster">명단 관리</a><a href="#reasons">불참 사유 관리</a><a href="#output">출결 결과</a><a href="#reviewManager" id="reviewShortcut">출결 검토</a></nav><p id="headerStorageNote" role="note">각 항목별 변경사항은 현재 브라우저에만 저장됩니다. 다른 기기와 자동 공유되지 않습니다.</p></header>
+<header><div class="header-title-row"><h1 id="mainTitle">관현악, 군악대 출결 관리</h1><a class="sheet-shortcut sheet-shortcut-top" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer" aria-label="구글 스프레드시트 새 탭에서 열기">↗ 구글시트</a></div><p class="muted" id="headerCount">현재 57명 기준</p><nav class="tabnav"><a href="#bulk">출결 붙여넣기</a><a href="#roster">명단 관리</a><a href="#reasons">불참 사유 관리</a><a href="#output">출결 결과</a><a href="#reviewManager" id="reviewShortcut">출결 검토</a></nav><p id="headerStorageNote" role="note">출결 입력·명단의 일부 설정은 현재 브라우저에 저장됩니다. 출결 마감 상태와 공통 비밀번호는 서버에서 공유됩니다.</p></header>
 <section class="section" id="meetingNavigation" aria-label="모임 전환"><div class="row"><label for="meetingSelect"><b>모임 선택 · 이동</b></label><select id="meetingSelect" style="flex:1;min-width:240px" aria-label="모임 선택 및 엑셀 적용 화면으로 이동"></select></div><p class="hint">엑셀 적용 중에도 이 목록에서 다른 모임으로 이동할 수 있습니다.</p></section>
 <section class="section" id="meetingSection"><h2>① 모임 날짜 선택</h2>
 <div class="row date-controls"><label for="yearSelect">날짜 선택</label><select id="yearSelect" class="date-select" aria-label="연도"></select><select id="monthSelect" class="date-select" aria-label="월"></select><select id="daySelect" class="date-select" aria-label="일"></select></div>
@@ -327,9 +327,9 @@ body.excel-mode #reviewManager{display:none!important}
 <div class="row excel-download-actions"><button type="button" id="downloadExcelSelected">선택 항목만 다운로드</button><button type="button" class="secondary" id="downloadExcelAll">전체 엑셀 다운로드</button><button type="button" class="outline" id="backFromExcel">모임으로 돌아가기</button></div>
 </section>
 <section class="section hidden" id="reviewManager"><h2>출결 검토 관리</h2>
-<p class="hint">연도·월별로 모임을 묶어 검토 현황을 확인합니다. 각 모임의 날짜별 잠금은 해당 모임의 비밀번호를 사용합니다.</p>
+<p class="hint">연도·월별로 모임을 묶어 검토 현황을 확인합니다. 8개 모임에 공통 비밀번호 1개를 사용합니다. 검토 상태와 잠금은 구글시트 서버에서 공유됩니다.</p>
 <div class="row"><label for="reviewYear">연도</label><select id="reviewYear"></select><label for="reviewMonth">월</label><select id="reviewMonth"></select><button id="reviewRefresh" type="button" class="secondary">조회</button></div>
-<div id="reviewMonthList"></div><div class="row" style="margin-top:12px"><button id="reviewGoBack" type="button" class="outline">모임으로 돌아가기</button></div></section>
+<div class="row" style="margin-top:12px"><button type="button" id="reviewPasswordReset" class="outline">관리자 공통 비밀번호 변경</button></div><div id="reviewMonthList"></div><div class="row" style="margin-top:12px"><button id="reviewGoBack" type="button" class="outline">모임으로 돌아가기</button></div></section>
 <section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/출결구분/사유/상세사유/부분참석시간</b></p><p class="hint bulk-case-guide">이름 뒤에 붙는 영문자는 대문자·소문자 동일하게 인식합니다.</p><p class="hint bulk-case-example">예 : 김계시a = 김계시A</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
@@ -385,7 +385,7 @@ body.excel-mode #reviewManager{display:none!important}
 </div>
 <div class="review-panel" id="dateReviewPanel"><h2>출결 마감</h2><div id="dateReviewContent"></div></div>
 </section>
-<footer><div class="footer-shortcut-row"><span class="footer-shortcut-label">관현악·군악대 출결관리</span><a class="sheet-shortcut sheet-shortcut-bottom" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer">↗ 구글시트 열기</a></div>입력 데이터는 이 기기의 브라우저에 저장되며 별도 서버로 전송하지 않습니다. 공유 기기에서는 사용 후 초기화하세요.</footer>
+<footer><div class="footer-shortcut-row"><span class="footer-shortcut-label">관현악·군악대 출결관리</span><a class="sheet-shortcut sheet-shortcut-bottom" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer">↗ 구글시트 열기</a></div>출결 마감 상태는 Google 서버에 저장됩니다. 일부 입력·명단 설정은 이 브라우저에 저장되므로 별도로 백업하세요.</footer>
 </main>
 <button id="backToTop" type="button" aria-label="페이지 맨 위로 이동" aria-hidden="true" tabindex="-1">↑ TOP</button>
 <script>
@@ -1074,50 +1074,88 @@ function setupMeetingUi(){
  const field=document.querySelector('#bulk > p b');if(field)field.textContent=special?'이름/출결구분/사유':'이름/출결구분/사유/상세사유/부분참석시간';
  document.getElementById('bulkInput').placeholder=special?'김계시/출\n최계시/미보고\n박계시/결/가정사':'김계시/출\n최계시/미보고\n박계시/부분/가정사/가족모임/16:00~\n이계시/결/개인사/개인보고';
 }
-/* 날짜별 출결 검토·잠금: 출결 데이터와 구분된 브라우저 저장 */
-const REVIEW_PREFIX=MULTI_PREFIX+'-review-v1-';
-const REVIEW_PW_PREFIX=MULTI_PREFIX+'-review-password-v1-';
-function reviewKey(meeting,date){return REVIEW_PREFIX+meeting+'-'+date}
-function reviewRecord(meeting,date){try{return JSON.parse(localStorage.getItem(reviewKey(meeting,date))||'null')||{status:'pending'}}catch(_){return {status:'pending'}}}
+/* Google Apps Script 서버 공통 비밀번호 / 날짜별 마감 상태 */
+const REVIEW_PREFIX=MULTI_PREFIX+'-review-server-cache-v2-';
+const REVIEW_SERVER_CACHE=new Map();
+const REVIEW_SERVER_DATES=new Map();
+let reviewConfigured=false,reviewServerAvailable=false,reviewLoading=false;
+function reviewKey(meeting,date){return meeting+'|'+date}
+function reviewRecord(meeting,date){return REVIEW_SERVER_CACHE.get(reviewKey(meeting,date))||{status:'pending'}}
 function isReviewLocked(meeting=activeMeeting,date=state.date){return reviewRecord(meeting,date).status==='locked'}
-function hasAttendanceRecord(meeting,date){try{const r=JSON.parse(localStorage.getItem(stateKey(meeting,date))||'null');return !!r&&(Object.keys(r.people||{}).length>0||(r.excludedSunday||[]).length>0||(r.emergencyPeople||[]).length>0)}catch(_){return false}}
-function saveReview(meeting,date,record){localStorage.setItem(reviewKey(meeting,date),JSON.stringify(record))}
-async function passwordHash(password){
- const bytes=new TextEncoder().encode('attendance-review-password-v1:'+password);
- if(!window.crypto?.subtle)throw new Error('비밀번호 확인은 보안 연결(HTTPS)에서 지원됩니다. GitHub Pages에서 접속해 주세요.');
- const digest=await crypto.subtle.digest('SHA-256',bytes);return [...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('');
+function hasAttendanceRecord(meeting,date){
+ try{const r=JSON.parse(localStorage.getItem(stateKey(meeting,date))||'null');
+  if(!!r&&(Object.keys(r.people||{}).length>0||(r.excludedSunday||[]).length>0||(r.emergencyPeople||[]).length>0))return true;
+ }catch(_){}
+ return !!REVIEW_SERVER_DATES.get(meeting)?.has(date);
+}
+function reviewApi(name,...args){
+ return new Promise((resolve,reject)=>{
+  if(typeof google==='undefined'||!google.script?.run){reject(new Error('서버 공통 잠금은 Apps Script 웹 앱에서만 동작합니다. 배포된 웹 앱 주소로 접속하세요.'));return}
+  google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args);
+ });
+}
+async function refreshDateReview(meeting=activeMeeting,date=state.date){
+ try{
+  const record=await reviewApi('getReviewStatus',meeting,date);
+  reviewServerAvailable=true;reviewConfigured=record.configured;
+  REVIEW_SERVER_CACHE.set(reviewKey(meeting,date),record);
+  if(record.hasSaved){if(!REVIEW_SERVER_DATES.has(meeting))REVIEW_SERVER_DATES.set(meeting,new Set());REVIEW_SERVER_DATES.get(meeting).add(date);}
+  if(meeting===activeMeeting&&date===state.date)renderDateReview();
+  if(document.body.classList.contains('review-mode'))renderReviewManager();
+  return record;
+ }catch(e){reviewServerAvailable=false;renderDateReview();console.warn('마감 상태 조회 실패',e);return null}
+}
+async function refreshReviewMonth(){
+ if(reviewLoading)return;
+ reviewLoading=true;
+ const y=Number(document.getElementById('reviewYear').value),m=Number(document.getElementById('reviewMonth').value);
+ try{
+  const data=await reviewApi('getReviewMonth',y,m);
+  reviewServerAvailable=true;reviewConfigured=data.configured;
+  const prefix=`${y}-${String(m).padStart(2,'0')}-`;
+  for(const key of [...REVIEW_SERVER_CACHE.keys()])if(key.split('|')[1]?.startsWith(prefix))REVIEW_SERVER_CACHE.delete(key);
+  for(const r of data.statuses)REVIEW_SERVER_CACHE.set(reviewKey(r.meeting,r.date),r);
+  for(const [meeting,dates] of Object.entries(data.attendanceDates))REVIEW_SERVER_DATES.set(meeting,new Set(dates));
+  renderReviewManager();renderDateReview();
+ }catch(e){reviewServerAvailable=false;alert('검토 상태를 조회할 수 없습니다: '+(e.message||e));renderReviewManager();}
+ finally{reviewLoading=false}
 }
 async function changeReviewLock(meeting,date){
- const current=reviewRecord(meeting,date),locked=current.status==='locked';
- if(!locked&&!hasAttendanceRecord(meeting,date)){alert('이 날짜에는 저장된 출결 기록이 없어 검토할 수 없습니다.');return}
- const passwordKey=REVIEW_PW_PREFIX+meeting,stored=localStorage.getItem(passwordKey);
- let password;
- if(!stored){
-  if(locked){alert('설정된 비밀번호가 없어 잠금을 해제할 수 없습니다.');return}
-  const one=prompt(MEETING_LABELS[meeting]+'의 잠금 비밀번호를 새로 설정하세요. (6자 이상)');if(one===null)return;
-  if(one.length<6){alert('비밀번호는 6자 이상으로 설정해 주세요.');return}
-  const two=prompt('비밀번호를 다시 입력해 주세요.');if(two!==one){alert('비밀번호가 일치하지 않습니다.');return}
-  password=one;
+ let current;
+ try{current=await reviewApi('getReviewStatus',meeting,date)}
+ catch(e){alert('서버 연결 실패: '+(e.message||e));return}
+ REVIEW_SERVER_CACHE.set(reviewKey(meeting,date),current);
+ if(current.hasSaved){if(!REVIEW_SERVER_DATES.has(meeting))REVIEW_SERVER_DATES.set(meeting,new Set());REVIEW_SERVER_DATES.get(meeting).add(date);}
+ reviewConfigured=current.configured;reviewServerAvailable=true;
+ const locked=current.status==='locked';
+ let password=null;
+ if(!reviewConfigured){
+  if(locked){alert('관리자에게 공통 비밀번호 설정을 요청하세요.');return}
+  const first=prompt('8개 모임 공통 마감 비밀번호를 최초 설정하세요. (8자 이상, 관리자만 가능)');if(first===null)return;
+  if(first.length<8){alert('비밀번호는 8자 이상으로 설정해 주세요.');return}
+  const second=prompt('공통 비밀번호를 다시 입력하세요.');if(second!==first){alert('비밀번호가 일치하지 않습니다.');return}
+  try{await reviewApi('setupSharedReviewPassword',first,second);reviewConfigured=true}
+  catch(e){alert('비밀번호 설정 실패: '+(e.message||e));return}
+  password=first;
  }else{
-  password=prompt(MEETING_LABELS[meeting]+'의 '+(locked?'잠금 해제':'검토 확정·잠금')+' 비밀번호를 입력해 주세요.');if(password===null)return;
+  password=prompt('8개 모임 공통 '+(locked?'잠금 해제':'출결 마감')+' 비밀번호를 입력하세요.');if(password===null)return;
  }
+ if(!confirm(locked?`${date} 잠금을 해제하고 [수정 중]으로 변경할까요?`:`${date} 출결을 검토 완료로 확정하고 잠글까요?`))return;
  try{
-  const hashed=await passwordHash(password);
-  if(stored&&hashed!==stored){alert('비밀번호가 올바르지 않습니다.');return}
-  if(!locked&&!confirm(date+' 출결 검토를 완료하고 잠글까요?'))return;
-  if(locked&&!confirm(date+' 잠금을 해제하고 [수정 중]으로 변경할까요?'))return;
-  if(!stored)localStorage.setItem(passwordKey,hashed);
-  saveReview(meeting,date,{status:locked?'editing':'locked',updatedAt:new Date().toISOString()});
-  updateReviewUi();
- }catch(e){alert(e.message)}
+  const result=await reviewApi('changeSharedReviewLock',meeting,date,password);
+  REVIEW_SERVER_CACHE.set(reviewKey(meeting,date),result);
+  if(meeting===activeMeeting&&date===state.date)renderDateReview();
+  if(document.body.classList.contains('review-mode'))await refreshReviewMonth();
+  else await refreshDateReview(meeting,date);
+ }catch(e){alert('출결 마감 처리 실패: '+(e.message||e));await refreshDateReview(meeting,date)}
 }
 function statusLabel(s){return s==='locked'?'검토 완료':s==='editing'?'수정 중':'검토 전'}
 function statusClass(s){return s==='locked'?'done':s==='editing'?'editing':''}
 function createReviewTableRow(meeting,date,openable=false){
  const tr=document.createElement('tr'),r=reviewRecord(meeting,date),status=r.status||'pending';
  const d=new Date(date+'T12:00:00'),dt=document.createElement('td');dt.textContent=`${date.slice(5,7)}/${date.slice(8,10)} (${'일월화수목금토'[d.getDay()]})`;tr.append(dt);
- const st=document.createElement('td'),badge=document.createElement('span');badge.className='review-status '+statusClass(status);badge.textContent=hasAttendanceRecord(meeting,date)?statusLabel(status):'기록 없음';st.append(badge);tr.append(st);
- const action=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='review-action secondary';btn.textContent=status==='locked'?'🔒 해제':'🔓 잠금';btn.disabled=!hasAttendanceRecord(meeting,date);btn.addEventListener('click',()=>changeReviewLock(meeting,date));action.append(btn);tr.append(action);
+ const st=document.createElement('td'),badge=document.createElement('span');badge.className='review-status '+statusClass(status);badge.textContent=hasAttendanceRecord(meeting,date)||status!=='pending'?statusLabel(status):'기록 없음';st.append(badge);tr.append(st);
+ const action=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='review-action secondary';btn.textContent=status==='locked'?'🔒 해제':'🔓 잠금';btn.disabled=!reviewServerAvailable||(status!=='locked'&&!hasAttendanceRecord(meeting,date));btn.addEventListener('click',()=>changeReviewLock(meeting,date));action.append(btn);tr.append(action);
  if(openable){const link=document.createElement('button');link.type='button';link.className='outline review-action';link.textContent='출결 보기';link.addEventListener('click',()=>{document.body.classList.remove('review-mode');document.getElementById('meetingSelect').value=meeting;if(meeting!==activeMeeting)switchMeeting(meeting);save();state.date=date;load();syncDateControls();renderSunday();renderResults();document.getElementById('output').scrollIntoView({block:'start'})});action.append(' ',link)}
  return tr;
 }
@@ -1125,7 +1163,8 @@ function newReviewTable(){const t=document.createElement('table');t.className='r
 function renderDateReview(){
  const el=document.getElementById('dateReviewContent');if(!el)return;el.replaceChildren();
  const table=newReviewTable();table.tBodies[0].append(createReviewTableRow(activeMeeting,state.date));el.append(table);
- const note=document.createElement('p');note.className='hint';note.textContent='잠금 = 검토 완료 · 비밀번호로 해제하면 수정 중 · 다시 잠그면 검토 완료. 잠긴 출결은 수정·초기화할 수 없습니다.';el.append(note);
+ const refresh=document.createElement('button');refresh.type='button';refresh.className='secondary review-action';refresh.textContent='서버 상태 새로고침';refresh.addEventListener('click',()=>refreshDateReview(activeMeeting,state.date));el.append(refresh);
+ const note=document.createElement('p');note.className='hint';note.textContent='공통 비밀번호(8개 모임 동일) · 잠금 = 검토 완료 · 해제 = 수정 중. 다른 기기와 공유되며 잠긴 날짜의 구글시트 저장도 차단됩니다.';el.append(note);
  const locked=isReviewLocked();document.getElementById('applyBulk').disabled=locked;document.getElementById('reset').disabled=locked;
  const sun=document.getElementById('applySunday');if(sun)sun.disabled=locked;
  const em=document.getElementById('applyEmergencyCommittee');if(em)em.disabled=locked;
@@ -1141,7 +1180,7 @@ function renderReviewManager(){
    const date=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
    const weekday=new Date(y,m-1,d).getDay();
    const target={'mon':1,'tue-all':2,'tue-army':2,'fri':5,'sat-army':6,'sat-strings':6,'sat-committee':6,'emergency-committee':4}[meeting];
-   if(weekday===target||hasAttendanceRecord(meeting,date))days.push(date);
+   if(weekday===target||hasAttendanceRecord(meeting,date)||reviewRecord(meeting,date).status!=='pending')days.push(date);
   }
   for(const date of days)tbody.append(createReviewTableRow(meeting,date,true));
   const count=days.filter(d=>reviewRecord(meeting,d).status==='locked').length;
@@ -1169,6 +1208,7 @@ function renderResults(){
  document.getElementById('finalResult').textContent=computeTeam().full;
  document.getElementById('weeklyResult').textContent=computeWeeklyStatus();
  renderDateReview();
+ if(!window.__reviewLastFetch||window.__reviewLastFetch!==reviewKey(activeMeeting,state.date)){window.__reviewLastFetch=reviewKey(activeMeeting,state.date);Promise.resolve().then(()=>refreshDateReview(activeMeeting,state.date));}
 }
 function displayedResult(){return outputFormat==='team'?computeTeam():compute()}
 
@@ -2442,6 +2482,8 @@ async function appendRowsToExcel(meeting,date,fromFinal=false){
     google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)
       .saveAttendance(meeting,date,rows);
   });
+  if(!REVIEW_SERVER_DATES.has(meeting))REVIEW_SERVER_DATES.set(meeting,new Set());
+  REVIEW_SERVER_DATES.get(meeting).add(date);
   const zip=await prepareWorkbook(),metadata=await workbookMetadata(zip),path=metadata.paths.get(EXCEL_SHEETS[meeting]);
   if(!path)throw Error('해당 모임 시트를 찾지 못했습니다.');
   const doc=xmlParse(await zipRequired(zip,path),path),shared=await sharedStringTable(zip);
@@ -2537,16 +2579,17 @@ initExcelManager();
  const year=document.getElementById('reviewYear'),month=document.getElementById('reviewMonth'),now=new Date();
  for(let y=2020;y<=2040;y++){const o=document.createElement('option');o.value=y;o.textContent=y+'년';year.append(o)}year.value=String(now.getFullYear());
  for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=m;o.textContent=m+'월';month.append(o)}month.value=String(now.getMonth()+1);
- year.addEventListener('change',renderReviewManager);month.addEventListener('change',renderReviewManager);
- document.getElementById('reviewRefresh').addEventListener('click',renderReviewManager);
+ year.addEventListener('change',refreshReviewMonth);month.addEventListener('change',refreshReviewMonth);
+ document.getElementById('reviewRefresh').addEventListener('click',refreshReviewMonth);
+ document.getElementById('reviewPasswordReset').addEventListener('click',async()=>{const a=prompt('새 공통 비밀번호를 입력하세요. (8자 이상, 관리자만 가능)');if(a===null)return;const b=prompt('새 공통 비밀번호를 다시 입력하세요.');if(b===null)return;try{await reviewApi('resetSharedReviewPassword',a,b);reviewConfigured=true;alert('8개 모임 공통 마감 비밀번호가 변경되었습니다.')}catch(e){alert('변경 실패: '+(e.message||e))}});
  const select=document.getElementById('meetingSelect'),option=document.createElement('option');option.value='review-manager';option.textContent='출결 검토';select.append(option);
  select.addEventListener('change',()=>{
-  if(select.value==='review-manager'){document.body.classList.remove('excel-mode');document.body.classList.add('review-mode');renderReviewManager();document.getElementById('reviewManager').scrollIntoView({block:'start'});}
+  if(select.value==='review-manager'){document.body.classList.remove('excel-mode');document.body.classList.add('review-mode');renderReviewManager();refreshReviewMonth();document.getElementById('reviewManager').scrollIntoView({block:'start'});}
   else{document.body.classList.remove('review-mode')}
  });
  document.getElementById('reviewGoBack').addEventListener('click',()=>{document.body.classList.remove('review-mode');select.value=activeMeeting;document.getElementById('meetingSection').scrollIntoView({block:'start'})});
 })();
-
+refreshDateReview(activeMeeting,state.date);
 
 // Back to top (PC/mobile): no visible button while near the page top.
 (function setupBackToTop(){
