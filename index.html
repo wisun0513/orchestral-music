@@ -263,10 +263,34 @@ body.excel-mode #excelManager{display:block!important}
 #backToTop:focus-visible{outline:3px solid #92cbb0;outline-offset:3px}
 @media(max-width:640px){#backToTop{right:12px;bottom:calc(14px + env(safe-area-inset-bottom, 0px));min-height:44px}}
 @media(prefers-reduced-motion:reduce){#backToTop{transition:none}}
+
+/* 출결 검토 · 날짜별 잠금 */
+.review-panel{border:1px solid #c9dfce;background:#f8fcf9;border-radius:11px;padding:14px;margin-top:17px}
+.review-table{width:100%;border-collapse:collapse}.review-table th,.review-table td{padding:11px 8px;border-bottom:1px solid #e2eae4;white-space:normal}
+.review-status{font-size:12px;display:inline-block;padding:5px 9px;border-radius:15px;background:#edf0ed;color:#44564a;font-weight:700}
+.review-status.done{background:#dcf5e4;color:#116035}.review-status.editing{background:#fff0d0;color:#875100}
+.review-action{padding:7px 11px;font-size:12px}.review-month-group{border:1px solid #d5e3d9;border-radius:11px;padding:13px;margin:12px 0;background:white}
+.review-month-group h3{margin:0 0 8px;font-size:15px}.review-month-group .review-table td:first-child{font-weight:400}
+body.review-mode #meetingSection,body.review-mode #bulk,body.review-mode #roster,body.review-mode #reasons,body.review-mode #output,body.review-mode #sundaySection,body.review-mode #emergencyCommitteeSection,body.review-mode #excelManager{display:none!important}
+body.review-mode #reviewManager{display:block!important}
+body.excel-mode #reviewManager{display:none!important}
+.review-pw-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.review-pw-row input{flex:1;min-width:160px}
+@media(max-width:640px){.review-table th,.review-table td{display:table-cell;width:auto;font-size:12px;padding:9px 5px}.review-table tr{display:table-row;border:0;background:transparent}.review-table tbody{display:table-row-group;padding:0}.review-table td:before{display:none}}
+
+/* 출결 결과: 모임 유형에 따른 악기별 / 파트별 / 주간 현황 탭 */
+.result-format-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:16px 0 12px}
+.result-format-tabs.part-only{grid-template-columns:repeat(2,minmax(0,1fr))}
+.result-format-tabs button{min-width:0;padding:12px 7px;background:#eaf1ed;color:#174d3d;border:1px solid #b8ccc0;border-radius:9px;font-size:14px}
+.result-format-tabs button.active{background:#174d3d;color:#fff;border-color:#174d3d}
+.result-format-panel{min-width:0;background:#fbfdfa;border:1px solid #dae8dd;border-radius:12px;padding:13px}
+.result-format-panel .result{background:#fff;min-height:310px;max-height:640px;overflow:auto;font-size:14px}
+.result-format-panel .result-title{justify-content:space-between;margin-bottom:7px}
+.result-format-panel .result-title button{padding:10px 15px;font-size:13px}
+@media(max-width:640px){.result-format-tabs{gap:5px;margin:13px 0 9px}.result-format-tabs button{font-size:12px;padding:11px 4px}.result-format-panel{padding:10px}.result-format-panel .result{font-size:13px;min-height:230px;max-height:60vh}}
 </style>
 </head>
 <body><main>
-<header><div class="header-title-row"><h1 id="mainTitle">관현악, 군악대 출결 관리</h1><a class="sheet-shortcut sheet-shortcut-top" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer" aria-label="구글 스프레드시트 새 탭에서 열기">↗ 구글시트</a></div><p class="muted" id="headerCount">현재 57명 기준</p><nav class="tabnav"><a href="#bulk">출결 붙여넣기</a><a href="#roster">명단 관리</a><a href="#reasons">불참 사유 관리</a><a href="#output">출결 결과</a></nav><p id="headerStorageNote" role="note">각 항목별 변경사항은 현재 브라우저에만 저장됩니다. 다른 기기와 자동 공유되지 않습니다.</p></header>
+<header><div class="header-title-row"><h1 id="mainTitle">관현악, 군악대 출결 관리</h1><a class="sheet-shortcut sheet-shortcut-top" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer" aria-label="구글 스프레드시트 새 탭에서 열기">↗ 구글시트</a></div><p class="muted" id="headerCount">현재 57명 기준</p><nav class="tabnav"><a href="#bulk">출결 붙여넣기</a><a href="#roster">명단 관리</a><a href="#reasons">불참 사유 관리</a><a href="#output">출결 결과</a><a href="#reviewManager" id="reviewShortcut">출결 검토</a></nav><p id="headerStorageNote" role="note">각 항목별 변경사항은 현재 브라우저에만 저장됩니다. 다른 기기와 자동 공유되지 않습니다.</p></header>
 <section class="section" id="meetingNavigation" aria-label="모임 전환"><div class="row"><label for="meetingSelect"><b>모임 선택 · 이동</b></label><select id="meetingSelect" style="flex:1;min-width:240px" aria-label="모임 선택 및 엑셀 적용 화면으로 이동"></select></div><p class="hint">엑셀 적용 중에도 이 목록에서 다른 모임으로 이동할 수 있습니다.</p></section>
 <section class="section" id="meetingSection"><h2>① 모임 날짜 선택</h2>
 <div class="row date-controls"><label for="yearSelect">날짜 선택</label><select id="yearSelect" class="date-select" aria-label="연도"></select><select id="monthSelect" class="date-select" aria-label="월"></select><select id="daySelect" class="date-select" aria-label="일"></select></div>
@@ -302,6 +326,10 @@ body.excel-mode #excelManager{display:block!important}
 <p class="hint">선택 다운로드에는 위에서 체크한 모임·날짜의 마지막 적용 기록만 포함됩니다. 전체 다운로드에는 업로드한 파일의 다른 날짜·모임 기록도 포함되며, 같은 날짜·같은 모임은 마지막으로 전송·적용한 기록 한 번만 저장됩니다.</p>
 <div class="row excel-download-actions"><button type="button" id="downloadExcelSelected">선택 항목만 다운로드</button><button type="button" class="secondary" id="downloadExcelAll">전체 엑셀 다운로드</button><button type="button" class="outline" id="backFromExcel">모임으로 돌아가기</button></div>
 </section>
+<section class="section hidden" id="reviewManager"><h2>출결 검토 관리</h2>
+<p class="hint">연도·월별로 모임을 묶어 검토 현황을 확인합니다. 각 모임의 날짜별 잠금은 해당 모임의 비밀번호를 사용합니다.</p>
+<div class="row"><label for="reviewYear">연도</label><select id="reviewYear"></select><label for="reviewMonth">월</label><select id="reviewMonth"></select><button id="reviewRefresh" type="button" class="secondary">조회</button></div>
+<div id="reviewMonthList"></div><div class="row" style="margin-top:12px"><button id="reviewGoBack" type="button" class="outline">모임으로 돌아가기</button></div></section>
 <section class="section" id="bulk"><h2>② 출결 붙여넣기</h2><p><b>이름/출결구분/사유/상세사유/부분참석시간</b></p><p class="hint bulk-case-guide">이름 뒤에 붙는 영문자는 대문자·소문자 동일하게 인식합니다.</p><p class="hint bulk-case-example">예 : 김계시a = 김계시A</p><textarea id="bulkInput" spellcheck="false" placeholder=""></textarea><div class="row" style="margin-top:10px"><button id="applyBulk">붙여넣은 출결 적용</button><button class="secondary" id="clearBulk">입력창 비우기</button><button class="outline" id="reset">전체 출결 초기화</button></div><div id="bulkMessage" class="notice hidden" role="status"></div></section>
 <section class="section" id="roster"><h2>③ 명단 관리 <span id="rosterTotal" class="pill roster-total">총 57명</span></h2>
 
@@ -318,7 +346,10 @@ body.excel-mode #excelManager{display:block!important}
 <div class="row"><label for="teamAssignment">파트</label><select id="teamAssignment" aria-label="추가할 파트"></select><label for="teamInstrument" id="teamInstrumentLabel">악기</label><select id="teamInstrument" aria-label="추가할 사람의 악기"></select><input id="newTeamPerson" placeholder="추가할 이름" aria-label="추가할 이름"><button id="assignTeam">파트원 추가</button></div></div>
 <div class="row" style="margin:5px 0 12px"><button class="secondary" id="sortTeamsKorean" type="button">가나다 순</button></div><div id="teamList"></div>
 <div id="teamMessage" class="notice hidden" role="status"></div></div>
-<div id="rosterMessage" class="notice hidden" role="status"></div></section>
+<div id="rosterMessage" class="notice hidden" role="status"></div>
+<div id="fixedManager" class="review-panel hidden"><h3 class="subhead">(화) 군악대 고정 참석 인원 관리</h3>
+<p class="hint">예배위원 명단에 있어도 기본 참석합니다. 부분참석을 입력하면 부분으로 표시됩니다. 이 설정은 (화) 전체모임 군악대에만 적용됩니다.</p>
+<div id="fixedList" class="row" style="margin:12px 0"></div><div class="row"><label for="fixedAdd">명단에서 선택</label><select id="fixedAdd" style="flex:1;min-width:150px"></select><button id="fixedAddBtn" type="button">고정 참석 추가</button></div></div></section>
 <section class="section" id="reasons"><h2>④ 불참 사유 관리</h2><div class="roster-sync-guide" id="reasonHint" role="note" aria-label="불참 사유 연동 안내">
   <strong><span class="notice-exclamation" aria-hidden="true">!</span> 불참 사유 연동 안내</strong>
   <p><b>모든 모임 탭에서 연동됩니다.</b> 미보고와 파트미보고는 순서 변경이 불가합니다.</p>
@@ -332,22 +363,28 @@ body.excel-mode #excelManager{display:block!important}
 <div id="checkMessage" class="notice" role="status"></div>
 <!-- Original controls retained for backwards-compatible calculation handlers, visually hidden. -->
 <div class="hidden" aria-hidden="true"><button id="formatInstrument" type="button"></button><button id="formatTeam" type="button"></button><div id="resultHeading"></div><div id="result"></div></div>
-<div id="mobileOutputTabs" class="mobile-output-tabs" role="group" aria-label="모바일 최종출결 양식 선택">
- <button id="showTraditionalResult" type="button" class="active" aria-pressed="true" aria-controls="traditionalResult">최종출결 1</button>
- <button id="showFinalResult" type="button" aria-pressed="false" aria-controls="finalResult">최종출결 2</button>
+<div id="resultFormatTabs" class="result-format-tabs" role="tablist" aria-label="출결 결과 형식 선택">
+ <button type="button" id="showTraditionalResult" class="active" role="tab" aria-selected="true" aria-controls="traditionalPanel">악기별</button>
+ <button type="button" id="showFinalResult" role="tab" aria-selected="false" aria-controls="finalPanel">파트별</button>
+ <button type="button" id="showWeeklyResult" role="tab" aria-selected="false" aria-controls="weeklyPanel">주간 현황</button>
 </div>
-<div class="dual-results" id="dualResults" data-mobile-view="traditional">
- <div class="previewArea" data-output-panel="traditional">
-  <div class="row result-title"><h2>최종출결 1</h2><button id="copyTraditionalAll" class="copy-all-large" type="button">전체 복사</button></div>
-  <p class="hint">기존 출결 양식 · 악기별 참석 및 불참</p>
-  <div id="traditionalResult" class="result" aria-label="기존 출결 양식 결과"></div>
- </div>
- <div class="previewArea" data-output-panel="final">
-  <div class="row result-title"><h2>최종출결 2</h2><div class="excel-final-actions"><button id="sendFinalExcel" class="secondary copy-all-large" type="button">구글시트 전송</button><button id="copyFinalAll" class="copy-all-large" type="button">전체 복사</button></div></div>
-  <p class="hint">개인별 최종 출결 · 이름/출결구분/사유 · 구글시트 자동 저장</p>
-  <div id="finalResult" class="result" aria-label="개인별 최종 출결 결과"></div><p id="excelQuickMessage" class="hint hidden" role="status"></p>
- </div>
-</div></section>
+<div id="traditionalPanel" class="result-format-panel" role="tabpanel" aria-labelledby="showTraditionalResult">
+ <div class="row result-title"><h2>악기별 출결</h2><button id="copyTraditionalAll" class="copy-all-large" type="button">전체 복사</button></div>
+ <p class="hint">기존 최종출결 1 · 악기별 참석 및 불참</p>
+ <div id="traditionalResult" class="result" aria-label="악기별 출결 결과"></div>
+</div>
+<div id="finalPanel" class="result-format-panel hidden" role="tabpanel" aria-labelledby="showFinalResult">
+ <div class="row result-title"><h2>파트별 출결</h2><div class="excel-final-actions"><button id="sendFinalExcel" class="secondary copy-all-large" type="button">구글시트 전송</button><button id="copyFinalAll" class="copy-all-large" type="button">전체 복사</button></div></div>
+ <p class="hint">기존 최종출결 2 · 파트별 명단 순서 · 개인별 출결</p>
+ <div id="finalResult" class="result" aria-label="파트별 출결 결과"></div><p id="excelQuickMessage" class="hint hidden" role="status"></p>
+</div>
+<div id="weeklyPanel" class="result-format-panel hidden" role="tabpanel" aria-labelledby="showWeeklyResult">
+ <div class="row result-title"><h2>주간 정기 모임 출결 현황</h2><button id="copyWeeklyAll" class="copy-all-large" type="button">전체 복사</button></div>
+ <p class="hint">출·결·미보고 비율과 사유별 결석자 · 출결 입력의 3번째 사유 / 4번째 상세사유 기준</p>
+ <div id="weeklyResult" class="result" aria-label="주간 출결 현황"></div>
+</div>
+<div class="review-panel" id="dateReviewPanel"><h2>출결 마감</h2><div id="dateReviewContent"></div></div>
+</section>
 <footer><div class="footer-shortcut-row"><span class="footer-shortcut-label">관현악·군악대 출결관리</span><a class="sheet-shortcut sheet-shortcut-bottom" href="https://docs.google.com/spreadsheets/d/1e50d6ARhBqU1bzZ6MkHCmxyVWFELhysly4c1h13HK0Y/edit" target="_blank" rel="noopener noreferrer">↗ 구글시트 열기</a></div>입력 데이터는 이 기기의 브라우저에 저장되며 별도 서버로 전송하지 않습니다. 공유 기기에서는 사용 후 초기화하세요.</footer>
 </main>
 <button id="backToTop" type="button" aria-label="페이지 맨 위로 이동" aria-hidden="true" tabindex="-1">↑ TOP</button>
@@ -709,7 +746,22 @@ function meetingDateForWeek(meeting,baseDate=localDate()){
 }
 function empty(){return {status:'미보고',reason:'',detail:'',time:''}}
 // (화) 군악대 고정 참석자: 부분참석만 입력값대로 유지하고 그 외에는 출석 처리.
-function isTuesdayArmyFixedAttendee(name){return activeMeeting==='tue-army'&&(name==='조슬기'||name==='최성빈')}
+const FIXED_ARMY_KEY=MULTI_PREFIX+'-tue-army-fixed-v1';
+function fixedArmyNames(){try{const v=JSON.parse(localStorage.getItem(FIXED_ARMY_KEY)||'null');return Array.isArray(v)?v:['조슬기','최성빈']}catch(_){return ['조슬기','최성빈']}}
+function isTuesdayArmyFixedAttendee(name){return activeMeeting==='tue-army'&&fixedArmyNames().includes(name)}
+function renderFixedManager(){
+ const el=document.getElementById('fixedManager');if(!el)return;
+ el.classList.toggle('hidden',activeMeeting!=='tue-army');if(activeMeeting!=='tue-army')return;
+ const list=document.getElementById('fixedList');list.replaceChildren();
+ for(const name of fixedArmyNames()){
+  const box=document.createElement('span');box.className='roster-member';box.style.width='auto';box.style.maxWidth='none';box.style.minWidth='105px';
+  const label=document.createElement('span');label.textContent=name;box.append(label);
+  const btn=document.createElement('button');btn.type='button';btn.textContent='×';btn.title=name+' 고정 참석 해제';btn.onclick=()=>{if(!confirm(name+' 님을 고정 참석에서 해제할까요?'))return;localStorage.setItem(FIXED_ARMY_KEY,JSON.stringify(fixedArmyNames().filter(x=>x!==name)));renderFixedManager();renderResults()};box.append(btn);list.append(box);
+ }
+ const sel=document.getElementById('fixedAdd');sel.replaceChildren();
+ for(const name of PEOPLE.map(p=>p.name).filter(n=>!fixedArmyNames().includes(n))){const o=document.createElement('option');o.value=name;o.textContent=name;sel.append(o)}
+}
+document.getElementById('fixedAddBtn').addEventListener('click',()=>{const n=document.getElementById('fixedAdd').value;if(!n)return;localStorage.setItem(FIXED_ARMY_KEY,JSON.stringify([...fixedArmyNames(),n]));renderFixedManager();renderResults()});
 function get(name){
  const record=state.people[name];
  if(isTuesdayArmyFixedAttendee(name)){
@@ -938,6 +990,48 @@ function absentReasonsOrdered(){
  return groupedAbsenceLines(absent);
 }
 
+/* 주간 현황: 3번째 입력값은 사유, 4번째 입력값은 상세사유로 사용. */
+const WEEKLY_REASON_ORDER=['가정사','개인보고','개인사','건강','전도활동','직장','타업무','타지'];
+function computeWeeklyStatus(){
+ const people=attendancePeople(),total=people.length;
+ let present=0,partial=0,missing=0,absent=0;
+ const missingNames=[],reasonGroups=new Map();
+ for(const {name} of people){
+  const p=get(name);
+  if(p.status==='출'||p.status==='부분'){
+   present++;if(p.status==='부분')partial++;
+   continue;
+  }
+  if(p.status==='미보고'||p.reason==='미보고'||p.reason==='파트미보고'){
+   missing++;missingNames.push(name);continue;
+  }
+  absent++;
+  const reason=String(p.reason||'').trim()||'사유 미기재/확인 필요';
+  if(!reasonGroups.has(reason))reasonGroups.set(reason,[]);
+  reasonGroups.get(reason).push({name,detail:String(p.detail||'').trim()});
+ }
+ const percent=n=>total?(100*n/total).toFixed(1):'0.0';
+ const [y,m,d]=state.date.split('-').map(Number);
+ const title=`■ ${finalMeetingName()}(${String(m).padStart(2,'0')}월 ${String(d).padStart(2,'0')}일)`;
+ const lines=['< 주간 정기 모임 출결 현황 >','',title,
+  `총 재적 ${total}명`,
+  `출 ${present}명(${percent(present)}%)`,
+  `결 ${absent}명(${percent(absent)}%)`,
+  `미보고 ${missing}명(${percent(missing)}%)`];
+ if(missingNames.length)lines.push('('+missingNames.join(' ')+')');
+ if(partial)lines.push(`※ 부분참석 ${partial}명(출 인원에 포함)`);
+ lines.push('','[결석 사유별 항목]');
+ const reasonKeys=[...WEEKLY_REASON_ORDER,...[...reasonGroups.keys()].filter(r=>!WEEKLY_REASON_ORDER.includes(r)&&r!=='미보고'&&r!=='파트미보고')];
+ for(const reason of reasonKeys){
+  const people=reasonGroups.get(reason)||[];
+  lines.push('',`${reason} ${people.length}명`);
+  for(const person of people){
+   // 상세사유 입력이 없다면 이름만 표기한다 (직장·타지도 동일).
+   lines.push(person.name+(person.detail?'('+person.detail+')':''));
+  }
+ }
+ return lines.join('\n');
+}
 function specialAttendanceSummary(){
  const c=compute().counts,[y,m,d]=state.date.split('-').map(Number),day='일월화수목금토'[new Date(y,m-1,d).getDay()];
  const title=`< ${m}. ${String(d).padStart(2,'0')}.(${day}) ${finalMeetingName()} 출결 최종 >`;
@@ -949,6 +1043,10 @@ function specialAttendanceSummary(){
 }
 function setupMeetingUi(){
  const special=isPartOnly();
+ document.getElementById('resultFormatTabs').classList.toggle('part-only',special);
+ document.getElementById('showTraditionalResult').classList.toggle('hidden',special);
+ if(special && activeResultFormat==='instrument')activeResultFormat='team';
+ selectResultFormat(activeResultFormat);
  document.getElementById('roster').classList.remove('emergency-readonly');
  document.getElementById('rosterTabs').classList.remove('hidden');
  document.getElementById('instrumentTab').classList.toggle('hidden',special);
@@ -967,11 +1065,82 @@ function setupMeetingUi(){
  document.querySelector('#bulk .bulk-case-example').textContent='예 : 김계시a = 김계시A';
  const field=document.querySelector('#bulk > p b');if(field)field.textContent=special?'이름/출결구분/사유':'이름/출결구분/사유/상세사유/부분참석시간';
  document.getElementById('bulkInput').placeholder=special?'김계시/출\n최계시/미보고\n박계시/결/가정사':'김계시/출\n최계시/미보고\n박계시/부분/가정사/가족모임/16:00~\n이계시/결/개인사/개인보고';
- document.querySelector('[data-output-panel="traditional"] .result-title h2').textContent='최종출결 1';
- document.querySelector('[data-output-panel="final"] .result-title h2').textContent='최종출결 2';
- document.querySelector('[data-output-panel="traditional"] .hint').textContent=special?'업로드한 전도단·기도회 방식 · 개인별 출결':'기존 출결 양식 · 악기별 참석 및 불참';
- document.querySelector('[data-output-panel="final"] .hint').textContent='파트별 명단 순서 · 개인별 출결 (1명씩 한 줄)';
 }
+/* 날짜별 출결 검토·잠금: 출결 데이터와 구분된 브라우저 저장 */
+const REVIEW_PREFIX=MULTI_PREFIX+'-review-v1-';
+const REVIEW_PW_PREFIX=MULTI_PREFIX+'-review-password-v1-';
+function reviewKey(meeting,date){return REVIEW_PREFIX+meeting+'-'+date}
+function reviewRecord(meeting,date){try{return JSON.parse(localStorage.getItem(reviewKey(meeting,date))||'null')||{status:'pending'}}catch(_){return {status:'pending'}}}
+function isReviewLocked(meeting=activeMeeting,date=state.date){return reviewRecord(meeting,date).status==='locked'}
+function hasAttendanceRecord(meeting,date){try{const r=JSON.parse(localStorage.getItem(stateKey(meeting,date))||'null');return !!r&&(Object.keys(r.people||{}).length>0||(r.excludedSunday||[]).length>0||(r.emergencyPeople||[]).length>0)}catch(_){return false}}
+function saveReview(meeting,date,record){localStorage.setItem(reviewKey(meeting,date),JSON.stringify(record))}
+async function passwordHash(password){
+ const bytes=new TextEncoder().encode('attendance-review-password-v1:'+password);
+ if(!window.crypto?.subtle)throw new Error('비밀번호 확인은 보안 연결(HTTPS)에서 지원됩니다. GitHub Pages에서 접속해 주세요.');
+ const digest=await crypto.subtle.digest('SHA-256',bytes);return [...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+async function changeReviewLock(meeting,date){
+ const current=reviewRecord(meeting,date),locked=current.status==='locked';
+ if(!locked&&!hasAttendanceRecord(meeting,date)){alert('이 날짜에는 저장된 출결 기록이 없어 검토할 수 없습니다.');return}
+ const passwordKey=REVIEW_PW_PREFIX+meeting,stored=localStorage.getItem(passwordKey);
+ let password;
+ if(!stored){
+  if(locked){alert('설정된 비밀번호가 없어 잠금을 해제할 수 없습니다.');return}
+  const one=prompt(MEETING_LABELS[meeting]+'의 잠금 비밀번호를 새로 설정하세요. (6자 이상)');if(one===null)return;
+  if(one.length<6){alert('비밀번호는 6자 이상으로 설정해 주세요.');return}
+  const two=prompt('비밀번호를 다시 입력해 주세요.');if(two!==one){alert('비밀번호가 일치하지 않습니다.');return}
+  password=one;
+ }else{
+  password=prompt(MEETING_LABELS[meeting]+'의 '+(locked?'잠금 해제':'검토 확정·잠금')+' 비밀번호를 입력해 주세요.');if(password===null)return;
+ }
+ try{
+  const hashed=await passwordHash(password);
+  if(stored&&hashed!==stored){alert('비밀번호가 올바르지 않습니다.');return}
+  if(!locked&&!confirm(date+' 출결 검토를 완료하고 잠글까요?'))return;
+  if(locked&&!confirm(date+' 잠금을 해제하고 [수정 중]으로 변경할까요?'))return;
+  if(!stored)localStorage.setItem(passwordKey,hashed);
+  saveReview(meeting,date,{status:locked?'editing':'locked',updatedAt:new Date().toISOString()});
+  updateReviewUi();
+ }catch(e){alert(e.message)}
+}
+function statusLabel(s){return s==='locked'?'검토 완료':s==='editing'?'수정 중':'검토 전'}
+function statusClass(s){return s==='locked'?'done':s==='editing'?'editing':''}
+function createReviewTableRow(meeting,date,openable=false){
+ const tr=document.createElement('tr'),r=reviewRecord(meeting,date),status=r.status||'pending';
+ const d=new Date(date+'T12:00:00'),dt=document.createElement('td');dt.textContent=`${date.slice(5,7)}/${date.slice(8,10)} (${'일월화수목금토'[d.getDay()]})`;tr.append(dt);
+ const st=document.createElement('td'),badge=document.createElement('span');badge.className='review-status '+statusClass(status);badge.textContent=hasAttendanceRecord(meeting,date)?statusLabel(status):'기록 없음';st.append(badge);tr.append(st);
+ const action=document.createElement('td'),btn=document.createElement('button');btn.type='button';btn.className='review-action secondary';btn.textContent=status==='locked'?'🔒 해제':'🔓 잠금';btn.disabled=!hasAttendanceRecord(meeting,date);btn.addEventListener('click',()=>changeReviewLock(meeting,date));action.append(btn);tr.append(action);
+ if(openable){const link=document.createElement('button');link.type='button';link.className='outline review-action';link.textContent='출결 보기';link.addEventListener('click',()=>{document.body.classList.remove('review-mode');document.getElementById('meetingSelect').value=meeting;if(meeting!==activeMeeting)switchMeeting(meeting);save();state.date=date;load();syncDateControls();renderSunday();renderResults();document.getElementById('output').scrollIntoView({block:'start'})});action.append(' ',link)}
+ return tr;
+}
+function newReviewTable(){const t=document.createElement('table');t.className='review-table';const head=document.createElement('thead');head.innerHTML='<tr><th>날짜</th><th>검토 상태</th><th>잠금 / 관리</th></tr>';t.append(head,document.createElement('tbody'));return t}
+function renderDateReview(){
+ const el=document.getElementById('dateReviewContent');if(!el)return;el.replaceChildren();
+ const table=newReviewTable();table.tBodies[0].append(createReviewTableRow(activeMeeting,state.date));el.append(table);
+ const note=document.createElement('p');note.className='hint';note.textContent='잠금 = 검토 완료 · 비밀번호로 해제하면 수정 중 · 다시 잠그면 검토 완료. 잠긴 출결은 수정·초기화할 수 없습니다.';el.append(note);
+ const locked=isReviewLocked();document.getElementById('applyBulk').disabled=locked;document.getElementById('reset').disabled=locked;
+ const sun=document.getElementById('applySunday');if(sun)sun.disabled=locked;
+ const em=document.getElementById('applyEmergencyCommittee');if(em)em.disabled=locked;
+}
+function renderReviewManager(){
+ const list=document.getElementById('reviewMonthList');if(!list)return;list.replaceChildren();
+ const y=Number(document.getElementById('reviewYear').value),m=Number(document.getElementById('reviewMonth').value);
+ for(const [meeting,label] of Object.entries(MEETING_LABELS)){
+  const group=document.createElement('div');group.className='review-month-group';
+  const heading=document.createElement('h3');heading.textContent=label;group.append(heading);
+  const table=newReviewTable();const tbody=table.tBodies[0],days=[];
+  for(let d=1;d<=new Date(y,m,0).getDate();d++){
+   const date=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+   const weekday=new Date(y,m-1,d).getDay();
+   const target={'mon':1,'tue-all':2,'tue-army':2,'fri':5,'sat-army':6,'sat-strings':6,'sat-committee':6,'emergency-committee':4}[meeting];
+   if(weekday===target||hasAttendanceRecord(meeting,date))days.push(date);
+  }
+  for(const date of days)tbody.append(createReviewTableRow(meeting,date,true));
+  const count=days.filter(d=>reviewRecord(meeting,d).status==='locked').length;
+  const summary=document.createElement('p');summary.className='hint';summary.textContent=`검토 완료 ${count} / ${days.filter(d=>hasAttendanceRecord(meeting,d)).length}회 (기록 있는 날짜 기준)`;group.append(summary,table);list.append(group);
+ }
+}
+function updateReviewUi(){renderDateReview();if(document.body.classList.contains('review-mode'))renderReviewManager()}
 function renderResults(){
  document.getElementById('dateLabel').textContent='결과 : '+titleDate();
  const o=compute(),c=o.counts;
@@ -990,6 +1159,8 @@ function renderResults(){
  for(const [format,id] of [['instrument','formatInstrument'],['team','formatTeam']]){const b=document.getElementById(id);b.classList.toggle('active',outputFormat===format);b.classList.toggle('secondary',outputFormat!==format)}
  document.getElementById('traditionalResult').textContent=isPartOnly()?computeTeam().full:o.full;
  document.getElementById('finalResult').textContent=computeTeam().full;
+ document.getElementById('weeklyResult').textContent=computeWeeklyStatus();
+ renderDateReview();
 }
 function displayedResult(){return outputFormat==='team'?computeTeam():compute()}
 
@@ -999,6 +1170,7 @@ function normalizedInputName(raw){
 // Compare Latin suffixes without case sensitivity, retaining the roster's original spelling.
 function bulkNameKey(name){return cleanName(name).replace(/[a-z]/g,ch=>ch.toUpperCase())}
 function applyBulk(){
+ if(isReviewLocked()){alert('검토 완료로 잠긴 날짜입니다. 비밀번호로 잠금을 해제하세요.');return}
  const input=document.getElementById('bulkInput').value,lines=input.split(/\r?\n/);
  const known=new Map(attendancePeople().map(p=>[bulkNameKey(p.name),p.name]));
  const updates=new Map(),errors=[],duplicates=[],ignored=[],recognized=new Set();
@@ -1106,29 +1278,34 @@ function bulkExampleText(){
 }
 function refreshBulkExample(){document.getElementById('bulkInput').placeholder=bulkExampleText()}
 refreshBulkExample();
-document.getElementById('reset').addEventListener('click',()=>{if(!confirm(`${PEOPLE.length}명 출결 상태를 모두 미보고로 초기화할까요?`))return;state.people={};save();renderResults();document.getElementById('bulkMessage').classList.add('hidden')});
+document.getElementById('reset').addEventListener('click',()=>{if(isReviewLocked()){alert('잠금을 해제한 후 초기화해 주세요.');return}if(!confirm(`${PEOPLE.length}명 출결 상태를 모두 미보고로 초기화할까요?`))return;state.people={};save();renderResults();document.getElementById('bulkMessage').classList.add('hidden')});
 for(const [format,id] of [['instrument','formatInstrument'],['team','formatTeam']])document.getElementById(id).addEventListener('click',()=>{outputFormat=format;renderResults()});
-// Narrow screens: switch between existing result panels without changing content or copy actions.
-function selectMobileOutput(view){
- const selected=view==='final'?'final':'traditional';
- document.getElementById('dualResults').dataset.mobileView=selected;
- for(const [id,panel] of [['showTraditionalResult','traditional'],['showFinalResult','final']]){
-  const active=selected===panel;
-  const button=document.getElementById(id);
+// 각 모임 결과의 악기별 / 파트별 / 주간 현황 탭을 PC·모바일 공통으로 전환.
+let activeResultFormat='instrument';
+function selectResultFormat(format){
+ const chosen=isPartOnly()&&format==='instrument'?'team':format;
+ activeResultFormat=['instrument','team','weekly'].includes(chosen)?chosen:'team';
+ for(const [type,buttonId,panelId] of [
+  ['instrument','showTraditionalResult','traditionalPanel'],
+  ['team','showFinalResult','finalPanel'],
+  ['weekly','showWeeklyResult','weeklyPanel']]){
+  const active=activeResultFormat===type;
+  const button=document.getElementById(buttonId);
   button.classList.toggle('active',active);
-  button.setAttribute('aria-pressed',String(active));
+  button.setAttribute('aria-selected',String(active));
+  button.tabIndex=active?0:-1;
+  document.getElementById(panelId).classList.toggle('hidden',!active);
  }
 }
-document.getElementById('showTraditionalResult').addEventListener('click',()=>selectMobileOutput('traditional'));
-document.getElementById('showFinalResult').addEventListener('click',()=>selectMobileOutput('final'));
-// Always-visible results: independent copy buttons for each original output format.
-for(const [id,format] of [['copyTraditionalAll','instrument'],['copyFinalAll','team']]){
+document.getElementById('showTraditionalResult').addEventListener('click',()=>selectResultFormat('instrument'));
+document.getElementById('showFinalResult').addEventListener('click',()=>selectResultFormat('team'));
+document.getElementById('showWeeklyResult').addEventListener('click',()=>selectResultFormat('weekly'));
+for(const [id,format] of [['copyTraditionalAll','instrument'],['copyFinalAll','team'],['copyWeeklyAll','weekly']]){
  document.getElementById(id).addEventListener('click',e=>{
-  const result=format==='instrument'?(isPartOnly()?computeTeam():compute()):computeTeam();
-  copy(result.full,e.currentTarget);
+  const result=format==='instrument'?compute().full:format==='team'?computeTeam().full:computeWeeklyStatus();
+  copy(result,e.currentTarget);
  });
 }
-
 
 let selectedRoster=null;
 let draggingRoster=null;
@@ -1687,6 +1864,7 @@ function renderEmergencyCommittee(){
 }
 document.getElementById('clearEmergencyCommittee').addEventListener('click',()=>{document.getElementById('emergencyCommitteePaste').value='';});
 document.getElementById('applyEmergencyCommittee').addEventListener('click',()=>{
+ if(isReviewLocked()){alert('잠금을 해제한 후 예배위원 명단을 변경해 주세요.');return}
  if(activeMeeting!=='emergency-committee')return;
  const raw=document.getElementById('emergencyCommitteePaste').value.trim();
  const known=new Map(PEOPLE.map(p=>[bulkNameKey(p.name),p.name]));
@@ -1725,6 +1903,7 @@ function renderSundayCount(){
 }
 document.getElementById('clearSundayPaste').addEventListener('click',()=>{document.getElementById('sundayPaste').value='';});
 document.getElementById('applySunday').addEventListener('click',()=>{
+ if(isReviewLocked()){alert('잠금을 해제한 후 예배위원 명단을 변경해 주세요.');return}
  const raw=document.getElementById('sundayPaste').value.trim();
  const tokens=raw.split(/[\s,，;|]+/).map(x=>x.trim().replace(/\/$/,'')).filter(Boolean);
  const known=new Map(PEOPLE.map(p=>[cleanName(p.name),p.name]));
@@ -1746,7 +1925,7 @@ function switchMeeting(next){
  document.getElementById('bulkInput').value='';refreshBulkExample();document.getElementById('bulkMessage').classList.add('hidden');
  document.getElementById('rosterMessage').classList.add('hidden');document.getElementById('teamMessage').classList.add('hidden');
  document.getElementById('sundayPaste').value='';document.getElementById('sundayMessage').classList.add('hidden');
- selectedReason=null;refreshInstrumentSelect();renderRoster();renderTeams();setupMeetingUi();renderReasons();renderSunday();renderResults();save();
+ selectedReason=null;refreshInstrumentSelect();renderRoster();renderTeams();setupMeetingUi();renderReasons();renderSunday();renderFixedManager();renderResults();save();
 }
 const meetingSelect=document.getElementById('meetingSelect');
 for(const [id,label] of Object.entries(MEETING_LABELS)){const opt=document.createElement('option');opt.value=id;opt.textContent=label;meetingSelect.appendChild(opt)}
@@ -1755,6 +1934,7 @@ setupMeetingUi();
 renderReasons();
 renderTeams();
 renderSunday();
+renderFixedManager();
 renderResults();
 const previousMeeting=localStorage.getItem(MULTI_PREFIX+'-last-meeting');
 if(previousMeeting&&MEETING_LABELS[previousMeeting]&&previousMeeting!==activeMeeting)switchMeeting(previousMeeting);
@@ -2331,11 +2511,11 @@ function initExcelManager(){
  specialOption.value='excel-manager';specialOption.textContent='엑셀 적용';select.appendChild(specialOption);
  select.addEventListener('change',()=>{
   if(select.value==='excel-manager'){
-   document.body.classList.add('excel-mode');renderAllExcelDates();
+   document.body.classList.remove('review-mode');document.body.classList.add('excel-mode');renderAllExcelDates();
    excelEl('excelManager').scrollIntoView({block:'start',behavior:'instant'});
   }else{
    document.body.classList.remove('excel-mode');
-   if(select.value!==activeMeeting)switchMeeting(select.value);
+   if(select.value!=='review-manager'&&select.value!==activeMeeting)switchMeeting(select.value);
   }
  });
  excelEl('backFromExcel').addEventListener('click',()=>{
@@ -2345,6 +2525,19 @@ function initExcelManager(){
 }
 
 initExcelManager();
+(function initReviewManager(){
+ const year=document.getElementById('reviewYear'),month=document.getElementById('reviewMonth'),now=new Date();
+ for(let y=2020;y<=2040;y++){const o=document.createElement('option');o.value=y;o.textContent=y+'년';year.append(o)}year.value=String(now.getFullYear());
+ for(let m=1;m<=12;m++){const o=document.createElement('option');o.value=m;o.textContent=m+'월';month.append(o)}month.value=String(now.getMonth()+1);
+ year.addEventListener('change',renderReviewManager);month.addEventListener('change',renderReviewManager);
+ document.getElementById('reviewRefresh').addEventListener('click',renderReviewManager);
+ const select=document.getElementById('meetingSelect'),option=document.createElement('option');option.value='review-manager';option.textContent='출결 검토';select.append(option);
+ select.addEventListener('change',()=>{
+  if(select.value==='review-manager'){document.body.classList.remove('excel-mode');document.body.classList.add('review-mode');renderReviewManager();document.getElementById('reviewManager').scrollIntoView({block:'start'});}
+  else{document.body.classList.remove('review-mode')}
+ });
+ document.getElementById('reviewGoBack').addEventListener('click',()=>{document.body.classList.remove('review-mode');select.value=activeMeeting;document.getElementById('meetingSection').scrollIntoView({block:'start'})});
+})();
 
 
 // Back to top (PC/mobile): no visible button while near the page top.
